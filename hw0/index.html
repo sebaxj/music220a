@@ -1,0 +1,35 @@
+<html>
+  <a href='https://ccrma.stanford.edu/~sebaxj/'><button>Return to Homepage</button></a> <br>
+  <head>
+    <title>
+      Homework 0: String Plucking Impulse UGen built on SinOsc drone
+    </title>
+  </head>
+  <body>
+
+  Music 220a Homework 0, Spring 2021 <br>
+  String Plucking Impulse UGen built on SinOsc drone <br>
+  Sebastian James <br>
+  <br>
+
+  For part 1, I played around with the FM synthesis examples. I chose to manipulate the "Chuck-time"
+  variable, changing the dac output from every sample, to every 1000 samples. I noticed that as I increased
+  the time between samples being sent to dac, the "wave-like" appearance of the carrier signal modulating
+  became more apparent. At this sample rate I noticed the most desirable sound, changing what once appeared
+  as a constant tone, to a noticeable oscillating output. <br>
+  <br>
+  For part 2, I first used the SinOsc UGen to generate an A major third drone at 440 Hz. I then built a string "pluck" sound
+  using an impulse UGen to play over this drone at random frequencies. Furthermore, I then hard coded an array
+  of notes in the A-major triad (using their respective MIDI note values) to only play consonant sounds. I initially ran
+  into issues writing the delay for the string plucks. I either was overloaded with feedback, or recieved a short tone.
+  It taught me alot playing around with the Impulse UGen and how it can be manipulated vastly with only small increments
+  in its associated values. The other issue I noticed was that if I played the plucks at lower frequencies, the delay
+  filter was overloaded and the sound would be cut and an error message would appear in the console. I fixed this by raising
+  the plucks by one octave. <br>
+  <br>
+  <a href='./part1_fm_alt.wav'><button>1 Altered FM Audio</button></a> <br>
+  <a href='./part1_fm_alt.ck'><button>1 Altered FM Code</button></a> <br>
+  <a href='./imp_pluck.wav'><button>Part 2 Impulse UGen String "pluck" Audio</button></a> <br>
+  <a href='./imp_pluck.ck'><button>Part 2 Impulse UGen String "pluck" Code</button></a> <br>
+  </body>
+</html>
