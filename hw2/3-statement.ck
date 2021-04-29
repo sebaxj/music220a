@@ -101,7 +101,7 @@ dur a, dur d, float s, dur r) {
     e.releaseTime() => now;
 }
 
-fun void sweepVol(float min_gain, float max_gain, int T) {
+fun void sweepVol(float min_gain, float max_gain, float T) {
     
     float gain;
     
@@ -255,98 +255,16 @@ fun void intro4() {
     spork ~ playNote(50, gain, 8::second, 800::ms, 80::ms, 0.5, 200::ms);
 }
 
-fun void play(string input) {
-    if(input == "am") {
-        // Am
-        .5 => float vel;
-        for(0 => int i; i < 8; i++) {
-            playChord(57, min, vel, 50::ms, 50::ms, 0.5, 100::ms);
-            
-            80::ms => now;
-            vel - .2 => vel;
-        }
-    }
-    if(input == "cmaj") {
-        // C
-        .5 => float vel;
-        for(0 => int i; i < 8; i++) {
-            playChord(60, maj, vel, 50::ms, 50::ms, 0.5, 100::ms);
-            
-            80::ms => now;
-            vel - .2 => vel;
-        }
-    }
-    if(input == "ddim") {
-        // D dim
-        .5 => float vel;
-        for(0 => int i; i < 8; i++) {
-            playChord(62, dim, vel, 50::ms, 50::ms, 0.5, 100::ms);
-            
-            80::ms => now;
-            vel - .2 => vel;
-        }
-    }
-    if(input == "em") {
-        // Em
-        .5 => float vel;
-        for(0 => int i; i < 8; i++) {
-            playChord(64, min, vel, 50::ms, 50::ms, 0.5, 100::ms);
-            
-            80::ms => now;
-            vel - .2 => vel;
-        }
-    }
-    if(input == "fmaj") {
-        // F
-        .5 => float vel;
-        for(0 => int i; i < 8; i++) {
-            playChord(65, maj, vel, 50::ms, 50::ms, 0.5, 100::ms);
-            
-            80::ms => now;
-            vel - .2 => vel;
-        }
-    }
-    if(input == "gmaj") {
-        // G maj
-        .5 => float vel;
-        for(0 => int i; i < 8; i++) {
-            playChord(55, maj, vel, 50::ms, 50::ms, 0.5, 100::ms);
-            
-            80::ms => now;
-            vel - .2 => vel;
-        }
-    }
-    if(input == "g7") {
-        // G7
-        .5 => float vel;
-        for(0 => int i; i < 8; i++) {
-            playChord(67, v7, vel, 50::ms, 50::ms, 0.5, 100::ms);
-            
-            80::ms => now;
-            vel - .2 => vel;
-        }
-    }
-    if(input == "gdim7") {
-        // G dim 7
-        .5 => float vel;
-        for(0 => int i; i < 8; i++) {
-            playChord(55, dim7, vel, 50::ms, 50::ms, 0.5, 100::ms);
-            
-            80::ms => now;
-            vel - .2 => vel;
-        }
-    }
-    if(input == "amg") {
-        // Am/G
-        .5 => float vel;
-        for(0 => int i; i < 8; i++) {
-            playChord(55, min42, vel, 50::ms, 50::ms, 0.5, 100::ms);
-            
-            80::ms => now;
-            vel - .2 => vel;
-        }
-    }
+fun void play(int root, float chord[]) {
     
+    .5 => float vel;
+    
+    for(0 => int i; i < 8; i++) {
+        playChord(root, chord, vel, 50::ms, 50::ms, 0.5, 100::ms);
+        
+        80::ms => now;
+        vel - .2 => vel;
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -361,27 +279,25 @@ intro4();
 10::second => now;
 1.0 => dac.gain;
 
-play("cmaj");
-play("fmaj");
-play("g7");
-play("am");
+play(60, maj); // c maj
+play(65, maj); // f maj
+play(55, v7); // g7
+play(57, min); // am
 
 2::second => now;
 
-play("ddim");
-play("g7");
-play("am");
+play(57, min); // am
+play(62, dim); // ddim
+play(55, v7); // g7
+play(57, min); // am
 
-play("amg");
-play("cmaj");
-play("em");
-play("gdim7");
-play("am");
+play(55, min42); // amg
+play(60, maj); // c maj
+play(64, min); // em
+play(67, dim7); // gdim7
+play(57, min); // am
 
 4::second => now;
-
-
-
 
 
 
