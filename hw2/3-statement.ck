@@ -20,6 +20,7 @@
 
 // CONSTANTS //
 5 => float DENSITY;
+0.0 => float t;
 ///////////////
 
 // Global UGen //
@@ -98,6 +99,26 @@ dur a, dur d, float s, dur r) {
     
     // release
     e.releaseTime() => now;
+}
+
+fun void sweepVol(float min_gain, float max_gain) {
+    
+    float gain;
+    
+    while(true) {
+        
+        // sweep gain from initial gain to 0.8
+        min_gain + Std.fabs(Math.sin(t)) * max_gain => gain;
+        
+        gain => dac.gain;
+        
+        // move to next wave number
+        t + .01  => t;
+        
+        // wait 10 seconds to change gain
+        10::ms => now;
+    }
+    
 }
 
 fun void modulateDensity() {
@@ -229,50 +250,59 @@ fun void intro2() {
 }
 
 fun void intro3() {
-        // F
-    spork ~ playNote(65, 0.8, 1::second, 100::ms, 80::ms, 1.0, 200::ms);
+    // high f
+    spork ~ playNote(77, 1.0, 1::second, 100::ms, 80::ms, 1.0, 200::ms);
     200::ms => now;
     
-    // low d
-    spork ~ playNote(50, 0.8, .8::second, 100::ms, 80::ms, 1.0, 200::ms);
+    // D
+    spork ~ playNote(62, 0.8, .8::second, 100::ms, 80::ms, 1.0, 200::ms);
+    200::ms => now;
+    
+    // F
+    spork ~ playNote(65, 0.8, .6::second, 100::ms, 80::ms, 1.0, 200::ms);
+    200::ms => now;
+    
+    // low b
+    spork ~ playNote(47, 0.8, .4::second, 100::ms, 80::ms, 1.0, 200::ms);
     200::ms => now;
     
     // B
-    spork ~ playNote(59, 0.8, .6::second, 100::ms, 80::ms, 1.0, 200::ms);
-    200::ms => now;
-    
-    // high f
-    spork ~ playNote(77, 0.8, .4::second, 100::ms, 80::ms, 1.0, 200::ms);
-    200::ms => now;
-    
-    // low B
-    spork ~ playNote(47, 0.9, .2::second, 100::ms, 80::ms, 1.0, 200::ms);
+    spork ~ playNote(59, 0.9, .2::second, 100::ms, 80::ms, 1.0, 200::ms);
     200::ms => now;
       
-    // D
-    spork ~ playNote(62, 1.0, .1::second, 100::ms, 80::ms, 1.0, 200::ms);
-    3::second => now;
+    // low d
+    spork ~ playNote(50, 1.0, .1::second, 100::ms, 80::ms, 1.0, 200::ms);
+    6::second => now;
 }
 
 fun void intro4() {
+    
+    0.5 => float gain;
+    spork ~ sweepVol(0.5, 2.0);
+
     // B
-    spork ~ playNote(59, 0.5, 4::second, 100::ms, 80::ms, 1.0, 200::ms);
-    
+    spork ~ playNote(59, gain, 8::second, 800::ms, 80::ms, 0.5, 200::ms);
+        
     // D
-    spork ~ playNote(62, 0.5, 4::second, 100::ms, 80::ms, 1.0, 200::ms);
-    
+    spork ~ playNote(62, gain, 8::second, 800::ms, 80::ms, 0.5, 200::ms);
+        
     // F
-    spork ~ playNote(65, 0.5, 4::second, 100::ms, 80::ms, 1.0, 200::ms);
-    
+    spork ~ playNote(65, gain, 8::second, 800::ms, 80::ms, 0.5, 200::ms);
+        
     // low B
-    spork ~ playNote(47, 0.5, 4::second, 100::ms, 80::ms, 1.0, 200::ms);
-    
+    spork ~ playNote(47, gain, 8::second, 800::ms, 80::ms, 0.5, 200::ms);
+        
     // high f
-    spork ~ playNote(77, 0.5, 4::second, 100::ms, 80::ms, 1.0, 200::ms);
-    
+    spork ~ playNote(77, gain, 8::second, 800::ms, 80::ms, 0.5, 200::ms);
+        
     // low d
-    spork ~ playNote(50, 0.5, 4::second, 100::ms, 80::ms, 1.0, 200::ms);
-    6::second => now;
+    spork ~ playNote(50, gain, 8::second, 800::ms, 80::ms, 0.5, 200::ms);
+}
+
+fun void play(string input) {
+    if(input == "am") {
+        playAm();
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -283,7 +313,32 @@ intro1();
 intro2();
 intro3();
 intro4();
+
+10::second => now;
+1.0 => dac.gain;
+
 playC();
 playF();
 playG7();
 playAm();
+
+2::second => now;
+
+//playDdim():
+//playG7();
+//playAm();
+
+//playAmG();
+//playC();
+//playEm();
+//playGdim7();
+//playAm();
+
+4::second => now;
+
+
+
+
+
+
+
