@@ -1,22 +1,34 @@
 #!/bin/bash
 #
-# A script to take a HW repository for Music 220A, make a new Git branch,
-# and pull the code from main to the HW branch.
-# Then ssh to sebaxj@ccrma-gate.stanford.edu. Then, the new git commits
-# are pulled to the CCMRA mirror of the local directory. 
-# 
-# ffmpeg-normalize is run on the .wav files and the modified version replaces
-# the original.
+# Create Git branch, pull main, normalize .wav files with ffmpeg-normalize,
+# place in new directory, convert index.md to index.html with pandocs
 #
-# The Markdown file index.md is converted to index.html using pandoc
-#
-# The new changes are commited and pushed back to the HW banch.
-#
-# The changes are pulled to the HW branch on the local machine and the webpage
-# is opened locally. 
-#
-# The changes are reviewed, and if determined alright (probe y/n), y pushes
-# HW branch to main, deleted HW branch, pulls main to CCRMA main, deletes HW
-# branch. If n, script stops.
+# 1. Prompt HW #
+# 2. Pull 'main' into new branch (hw#)
+# 3. Run ffmpeg-normalize on .wav files, save to new directory
+# 4. Convert index.md to index.html with pandocs
+# 5. Push to remote branch, prompt user to merge branches.
+# 6. If 'y', merge branch to 'main' and delete branch, if 'n', exit.
 
-say Hello.
+echo A simple branch, pull, ffmpeg-normalize, .md to .html, push script!
+read -p "What is the directory for this HW? " hw_name
+
+# pull 'main' into new branch
+git checkout -b $hw_name
+git pull origin main
+
+# run ffmpeg-normalize
+mkdir normalized
+for FILE in *.wav; do ffmpeg-normalize $FILE; done
+
+# convert markdown to html for webpage
+pandoc -f markdown -t html5 -o output.html input.md -c style.css
+pandoc -s index.md -o example2.html
+# delete branch after succesful merge
+git checkout main
+git branch -d $hw_name
+
+
+
+
+
