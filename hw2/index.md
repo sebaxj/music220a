@@ -1,1 +1,10 @@
-# THIS IS A TEST
+# **Music 220a Homework 2, Spring 2021**
+## Block-Rockin' Synths
+### *Sebastian James*
+#
+# 
+### Part 1:
+[1f](./1f-chord-stmt.wav "1f")
+### Part 2:
+### Part 3:
+[3](./3-statement.wav "3")
