@@ -20,7 +20,7 @@ git branch
 
 # run ffmpeg-normalize
 mkdir normalized
-for FILE in *.wav; do ffmpeg-normalize $FILE; done
+for FILE in *.wav; do ffmpeg-normalize $FILE -ofmt wav; done
 
 # convert markdown to html for webpage
 pandoc -s index.md -o index.html
