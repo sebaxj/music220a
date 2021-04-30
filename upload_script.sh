@@ -16,7 +16,6 @@ cd $hw_name
 
 # pull 'main' into new branch
 git checkout -b $hw_name
-git pull origin $hw_name
 git branch
 
 # run ffmpeg-normalize
@@ -26,13 +25,13 @@ for FILE in *.wav; do ffmpeg-normalize $FILE; done
 # convert markdown to html for webpage
 pandoc -s index.md -o index.html
 
-# # push to remote, prompt user to pull and merge
+# push to remote, prompt user to pull and merge
 git status
 git add .
 git status
 read -p "Add a message for this commit: " commit_mes
-git commit -m $commit_mes
-git push --set-upstream origin $hw_name
+git commit -m "$commit_mes"
+git push origin $hw_name
 #
 while true; do
     read -p "Pull and merge $hw_name to main? " yn
@@ -52,6 +51,7 @@ git merge $hw_name
 
 # delete branch after succesful merge
 git branch -d $hw_name
+git push -d origin $hw_name
 
 
 
