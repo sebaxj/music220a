@@ -4,7 +4,10 @@
 #
 # 
 ### Part 1:
-[1f](./1f-chord-stmt.wav "1f")
+[1f](./normalized/1f-chord-stmt.wav "1f")
+
 ### Part 2:
+
 ### Part 3:
-[3](./3-statement.wav "3")
+[3](./normalized/3-statement.wav "3")
+
