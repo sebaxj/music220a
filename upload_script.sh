@@ -13,6 +13,7 @@
 echo A simple branch, pull, ffmpeg-normalize, .md to .html, push script!
 read -p "What is the directory for this HW? " hw_name
 
+
 # pull 'main' into new branch
 git checkout -b $hw_name
 git pull origin main
@@ -22,8 +23,28 @@ mkdir normalized
 for FILE in *.wav; do ffmpeg-normalize $FILE; done
 
 # convert markdown to html for webpage
-pandoc -f markdown -t html5 -o output.html input.md -c style.css
-pandoc -s index.md -o example2.html
+pandoc -s index.md -o index.html
+
+# # push to remote, prompt user to pull and merge
+git status
+git add .
+git status
+read -p "Add a message for this commit: " commit_mes
+git commit -m $commit_mes
+#
+while true; do
+    read -p "Pull and merge $hw_name to main? " yn
+    case $yn in
+        [Yy]* ) echo Checking branch $hw_name is up-to-date...; break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+#
+git checkout $hw_name
+git pull
+git 
+
 # delete branch after succesful merge
 git checkout main
 git branch -d $hw_name
