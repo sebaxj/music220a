@@ -16,7 +16,8 @@ read -p "What is the directory for this HW? " hw_name
 
 # pull 'main' into new branch
 git checkout -b $hw_name
-git pull origin main
+git pull origin $hw_name
+git branch
 
 # run ffmpeg-normalize
 mkdir normalized
@@ -31,6 +32,7 @@ git add .
 git status
 read -p "Add a message for this commit: " commit_mes
 git commit -m $commit_mes
+git push --set-upstream origin $hw_name
 #
 while true; do
     read -p "Pull and merge $hw_name to main? " yn
@@ -41,12 +43,14 @@ while true; do
     esac
 done
 #
+git branch
 git checkout $hw_name
+git branch
 git pull
-git 
+git checkout main
+git merge $hw_name
 
 # delete branch after succesful merge
-git checkout main
 git branch -d $hw_name
 
 
