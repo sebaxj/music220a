@@ -45,13 +45,16 @@ done
 git branch
 git checkout $hw_name
 git branch
-git pull
+git pull origin $hw_name
 git checkout main
 git merge $hw_name
 
 # delete branch after succesful merge
 git branch -d $hw_name
 git push -d origin $hw_name
+
+# final push changes to master
+git push
 
 
 
