@@ -26,6 +26,13 @@
 // Global UGen //
 // patch low -> rev -> dax ->
 LPF low => NRev rev => dac;
+
+// drum section
+me.dir() + "/misc/Heartbeat.wav" => string filename;
+if(me.args()) me.arg(0) => filename;
+    
+// patch
+SndBuf buf => low;
 /////////////////
 
 // Set Param for UGen //
@@ -115,7 +122,7 @@ fun void sweepVol(float min_gain, float max_gain, float T) {
         // move to next wave number
         t + .01  => t;
         
-        // wait 10 seconds to change gain
+        // wait 10 ms to change gain
         10::ms => now;
     }
     
@@ -267,58 +274,47 @@ fun void play(int root, float chord[]) {
     }
 }
 
-fun void sweepF(float min, float max, dur) {
-    while(true) {
+fun void sweepF(float min, float max) {
+    
+    max => low.freq;
+    
+    while(max > min) {
         // sweep the filter resonant frequency 100 Hz to 800 Hz
-        min + Std.fabs(Math.sin(t)) * max => low.freq;
-        
-        t + .01 => t;
+        max - 5. => low.freq;
         
         // advance time
         10::ms => now;
     }
-    // drum section
-    me.dir() + "/misc/Heartbeat.wav" => string filename;
-    if(me.args()) me.arg(0) => filename;
-    
-    // patch
-    SndBuf buf => low;
-    filename => buf.read;
-    
-    while(true) {
-        0 => buf.pos;
-        Math.random2f(.2,.5) => buf.gain;
-        Math.random2f(.5,1.5) => buf.rate;
-        100::ms => now;
-    }
-    
-    // sweep LPF
-    
-    
-    // play
-    
-    
-    
-    // sweep LPF
-    spork ~ sweepF(50.0, 1000., 2::second);
-    
-    /
-    
-    for(2.0 => float i; i > 0.05; i - 0.1 => i) {
-        
-    }
-    // sweep speed
-    // Stop
-    // low filter
-    // Slower beating
-    // Stop
-
 }
 
-fun void playBeat() {
+fun void makeBeat(float vel) {
+    filename => buf.read; 
+    0 => buf.pos;
+    vel => buf.gain;    
+    1.0 => buf.rate;
+}
+
+fun void playBeat(dur T) {
     spork ~  modulateDensity();
-    spork ~ sweepF(500.0, 50., 2::second);
+    spork ~ sweepF(800., 50.);
+   
+    while(T > 0::ms) {
+        // check density parameter, adjust if needed
+        if(DENSITY < 1) 1 => DENSITY;
+        if(DENSITY > 10) 10 => DENSITY;
     
+        // Density and wait time between notes are inversely related
+        // computer inverse of density and set to wait time
+        10/DENSITY * 50 => float min;
+    
+        (min + 500 + 1 * Math.random2f(0, Math.sqrt(min)))::ms => dur minT;
+    
+        // spork sound
+        spork ~ makeBeat(8.0);
+    
+        minT => now;
+        T - minT => T;
+    }
 }
 
 
@@ -339,7 +335,28 @@ play(65, maj); // f maj
 play(55, v7); // g7
 play(57, min); // am
 
-2::second => now;
+3::second => now;
+
+0.0 => rev.mix;
+
+spork ~ playBeat(10::second);
+
+12::second => now;
+
+500 => low.freq;
+0.1 => rev.mix;
+
+intro2();
+intro3();
+
+0.0 => rev.mix;
+
+spork ~ playBeat(10::second);
+
+12::second => now;
+
+500 => low.freq;
+0.1 => rev.mix;
 
 play(57, min); // am
 play(62, dim); // ddim

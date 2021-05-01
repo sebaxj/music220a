@@ -19,7 +19,6 @@ git checkout -b $hw_name
 git branch
 
 # run ffmpeg-normalize
-mkdir normalized
 for FILE in *.wav; do ffmpeg-normalize $FILE -ext wav; done
 
 # convert markdown to html for webpage

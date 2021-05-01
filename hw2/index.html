@@ -20,24 +20,46 @@
   <a href='./1d-chords.ck'><button>1d-chords code</button></a> <br>
   <a href='./normalized/1e-more.wav'><button>1e-more WAV</button></a> <br>
   <a href='./1e-more.ck'><button>1e-more code</button></a> <br>
+  <br>
+  Part 1 Chord Statement:<br>
+  In this statement, I built a chord progression following:<br>
+  <br>
+  i-ii dim-V-i-i 4/2-III-iii/III-V dim7/III-i<br>
+  <br>
+  I used an array of oscillators to create polyphony, and manipulated ADSR variables to create
+  more texture. Additionally, I created artificial artifacts on ii dim and V dim7/III be setting an 
+  attack of 0::ms. This created a very reverberant cacophony.<br>
+
   <a href='./normalized/1f-chord-stmt.wav'><button>1f-chord-stmt WAV</button></a> <br>
   <a href='./1f-chord-stmt.ck'><button>1f-chord-stmt code</button></a> <br>
 
+  <br>
   Part 2: <br>
+  <br>
+  In part 2, I created a C major third interval which plays throughout the piece. On top of this,
+  I added random MIDI notes between 50 and 70. All of this was played with a random density engine.<br>
   <a href='./normalized/2e-final.wav'><button>2e-final WAV</button></a> <br>
   <a href='./2e-final.ck'><button>2e-final code</button></a> <br>
-
-  Part 3: <br>
   <br>
-  Milestone presentation: <br>
 
-  Essentially, my idea is to create different textures layered on top of each other.<br>
+  Part 3: Distex, Sebastian James<br>
+  <br>
+
+  Essentially, my idea was to create different textures layered on top of each other.<br>
+  <br>
   1. Dissonance vs consonance<br>
-  2. gain<br>
+  2. Gain<br>
   3. Density<br>
-  4. Tempo THIS IS A TEST, YES IT IS.<br>
+  4. Tempo<br>
+  <br>
 
-  To do that, I have a little intro prepared.<br>
-  <a href='./normalized/3-statement.wav'><button>3-statement</button></a> <br>
+  To do that, I start with a b diminished chord which is played with variant textures and tempos. 
+  Following, I used a SndBuf UGen to import a heartbeat sample which I played through the density engine
+  created in Part 2. Additionally, I swept the LPF from high to low, so that while density continued at random,
+  the LPF decreased linearly from 800 Hz to 50 Hz. Following the "heartbeat section", I played the chord
+  progression from part 1 through the same signal chain as earlier in the statement, finally completing 
+  a modulation from C, to Am (I to iv).<br>
+  <a href='./normalized/3-statement.wav'><button>Distex</button></a> <br>
+  <a href='./3-statement.ck'><button>3-statement code</button></a> <br>
   </body>
 </html>
