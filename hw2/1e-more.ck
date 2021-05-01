@@ -53,11 +53,11 @@ dur a, dur d, float s, dur r) {
         //amp => gain => osc[i].gain;
     }
     
-    // open env (e is your envelope)
+    // open env
     e.set(a, d, s, r);
     e.keyOn();
     
-    // A through end of S
+    // A to S
     T-e.releaseTime() => now;
     
     // close env
@@ -82,7 +82,7 @@ fun void sweepVol() {
         // move to next wave number
         t + .01  => t;
         
-        // wait 10 seconds to change gain
+        // wait 8 ms to change gain
         8::ms => now;
     }
     

@@ -267,6 +267,60 @@ fun void play(int root, float chord[]) {
     }
 }
 
+fun void sweepF(float min, float max, dur) {
+    while(true) {
+        // sweep the filter resonant frequency 100 Hz to 800 Hz
+        min + Std.fabs(Math.sin(t)) * max => low.freq;
+        
+        t + .01 => t;
+        
+        // advance time
+        10::ms => now;
+    }
+    // drum section
+    me.dir() + "/misc/Heartbeat.wav" => string filename;
+    if(me.args()) me.arg(0) => filename;
+    
+    // patch
+    SndBuf buf => low;
+    filename => buf.read;
+    
+    while(true) {
+        0 => buf.pos;
+        Math.random2f(.2,.5) => buf.gain;
+        Math.random2f(.5,1.5) => buf.rate;
+        100::ms => now;
+    }
+    
+    // sweep LPF
+    
+    
+    // play
+    
+    
+    
+    // sweep LPF
+    spork ~ sweepF(50.0, 1000., 2::second);
+    
+    /
+    
+    for(2.0 => float i; i > 0.05; i - 0.1 => i) {
+        
+    }
+    // sweep speed
+    // Stop
+    // low filter
+    // Slower beating
+    // Stop
+
+}
+
+fun void playBeat() {
+    spork ~  modulateDensity();
+    spork ~ sweepF(500.0, 50., 2::second);
+    
+}
+
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -286,27 +340,6 @@ play(55, v7); // g7
 play(57, min); // am
 
 2::second => now;
-
-// drum section
-me.dir() + "/misc/heartbeat.wav" => string filename;
-if(me.args()) me.arg(0) => filename;
-
-// patch
-SndBuf => dac;
-filename => buf.read;
-
-while(true) {
-    0 => buf.pos;
-    Math.random2f(.2,.5) => buf.gain;
-    Math.random2f(.5,1.5) => buf.rate;
-    100::ms => now;
-}
-// sweep LPF
-// raise speed with LPF
-// Stop
-// low filter
-// Slower beating
-// Stop
 
 play(57, min); // am
 play(62, dim); // ddim

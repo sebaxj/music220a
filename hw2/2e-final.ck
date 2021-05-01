@@ -1,11 +1,10 @@
 5 => float DENSITY;
-0 => float t;
 
 // global UGen
 NRev rev => dac;
 
 // mix reverb
-.1 => rev.mix;
+.05 => rev.mix;
 
 // function
 fun void makeSound(float pitch, float vel, dur T)
@@ -17,11 +16,11 @@ fun void makeSound(float pitch, float vel, dur T)
     Std.mtof(pitch) => s.freq;
     vel => s.gain;
     
-    // open env (e is your envelope
+    // open env
     e.set(50::ms, 50::ms, .08, 50::ms);
     e.keyOn();
     
-    // A through end of S
+    // A to S
     T-e.releaseTime() => now;
     
     // close env
@@ -55,6 +54,8 @@ while(true) {
     
     // spork sound
     spork ~ makeSound(60, .1, DENSITY * Math.random2f(.2, .4)::second);
+    spork ~ makeSound(64, .1, DENSITY * Math.random2f(.2, .4)::second);
+    spork ~ makeSound(Math.random2f(50, 70), .1, DENSITY * Math.random2f(.2, .4)::second);
     
     
     minT => now;

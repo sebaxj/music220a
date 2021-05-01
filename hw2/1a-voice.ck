@@ -5,7 +5,7 @@ SawOsc saw => LPF low => ADSR e => dac;
 Std.mtof(60) => saw.freq;
 
 // set LPF
-500 => low.freq;
+200 => low.freq;
 1 => low.Q;
 0.5 => low.gain;
 

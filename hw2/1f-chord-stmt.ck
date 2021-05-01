@@ -10,7 +10,7 @@ for(0 => int i; i < osc.cap(); i++) {
 }
 
 // set LPF
-500 => low.freq;
+300 => low.freq;
 1 => low.Q;
 0.5 => low.gain;
 
