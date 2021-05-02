@@ -52,6 +52,11 @@ git pull origin $hw_name
 git checkout main
 
 echo All Done!
+echo Run the following commands:
+echo git merge $hw_name
+echo git branch -d $hw_name
+echo git push -d origin $hw_name
+echo git push
 
 
 
