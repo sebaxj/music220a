@@ -14,12 +14,15 @@ echo A simple branch, pull, ffmpeg-normalize, .md to .html, push script!
 read -p "What is the directory for this HW? " hw_name
 cd $hw_name
 
-# pull 'main' into new branch
+# pull remote branch into new branch
 git checkout -b $hw_name
-git branch
+git branch --set-upstream-to origin/$hw_name
+git pull origin $hw_name
 
 # run ffmpeg-normalize
+cd wav
 for FILE in *.wav; do ffmpeg-normalize $FILE -ext wav; done
+cd ..
 
 # convert markdown to html for webpage
 pandoc -s index.md -o index.html
