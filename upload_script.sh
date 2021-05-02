@@ -51,13 +51,7 @@ git branch
 git pull origin $hw_name
 git checkout main
 
-git merge $hw_name
-git branch -d $hw_name
-git push origin --delete $hw_name
-
-# final push to main
-git push
-
+echo All Done!
 
 
 
