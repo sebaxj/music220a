@@ -10,6 +10,9 @@
 # 5. Push to remote branch, prompt user to merge branches.
 # 6. If 'y', merge branch to 'main' and delete branch, if 'n', exit.
 
+echo A simple branch, pull, ffmpeg-normalize, .md to .html, push script!
+read -p "What is the directory for this HW?" hw_name
+
 # pull remote branch into new branch
 git checkout -b $hw_name
 git branch --set-upstream-to origin/$hw_name
