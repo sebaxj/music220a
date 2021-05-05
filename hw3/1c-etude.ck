@@ -1,4 +1,10 @@
-[0., -10., -8., -6., -3., -1., 0.] @=> float stmt[];
+[0., -12., -10., -9.] @=> float a[];
+[0., -12., 0., -2.] @=> float b[];
+[0., -4., -2., 0.] @=> float c[];
+[0., -12., 0., -1.] @=> float d[];
+[0., -5., -4., -2.] @=> float e2[];
+[0., -12.] @=> float f[];
+
 800::ms => dur T;
 
 SawOsc saw => LPF low => ADSR e => NRev rev => dac;
@@ -31,30 +37,96 @@ spork ~ modulateT();
 
 // infitine loop to play noise
 while(true) {
-    60 => int root;
-    for(0 => int j; j < 8; j++) {
-        for(0 => int i; i < stmt.cap(); i++) {
-            Std.mtof(root + stmt[i]) => saw.freq;
-            
-            // raise LPF on first note to accent, otherwise keep low.
-            if(i < 1) {
-                1000 => low.freq;
-            } else if(i > 0) {
-                200 => low.freq;
-            }
-            spork ~ playShort();
-            T => now;
-        }
+    // a
+    86 => int root;
+    for(0 => int i; i < a.cap(); i++) {
+        Std.mtof(root + a[i]) => saw.freq;
         
-        // intervals to create ascending major scale
-        if(j == 0) root + 2 => root;
-        if(j == 1) root + 2 => root;
-        if(j == 2) root + 1 => root;
-        if(j == 3) root + 2 => root;
-        if(j == 4) root + 2 => root;
-        if(j == 5) root + 2 => root;
-        if(j == 6) root + 1 => root;
+        // raise LPF on first note to accent, otherwise keep low.
+        if(i < 1) {
+            1000 => low.freq;
+        } else if(i > 0) {
+            200 => low.freq;
+        }
+        spork ~ playShort();
+        T => now;
     }
+    
+    // b
+    79 => root;
+    for(0 => int i; i < b.cap(); i++) {
+        Std.mtof(root + b[i]) => saw.freq;
+        
+        // raise LPF on first note to accent, otherwise keep low.
+        if(i < 1) {
+            1000 => low.freq;
+        } else if(i > 0) {
+            200 => low.freq;
+        }
+        spork ~ playShort();
+        T => now;
+    }
+    
+    // c
+    76 => root;
+    for(0 => int i; i < c.cap(); i++) {
+        Std.mtof(root + c[i]) => saw.freq;
+        
+        // raise LPF on first note to accent, otherwise keep low.
+        if(i < 1) {
+            1000 => low.freq;
+        } else if(i > 0) {
+            200 => low.freq;
+        }
+        spork ~ playShort();
+        T => now;
+    }
+    
+    // d
+    77 => root;
+    for(0 => int i; i < d.cap(); i++) {
+        Std.mtof(root + d[i]) => saw.freq;
+        
+        // raise LPF on first note to accent, otherwise keep low.
+        if(i < 1) {
+            1000 => low.freq;
+        } else if(i > 0) {
+            200 => low.freq;
+        }
+        spork ~ playShort();
+        T => now;
+    }
+    
+    // e
+    76 => root;
+    for(0 => int i; i < e2.cap(); i++) {
+        Std.mtof(root + e2[i]) => saw.freq;
+        
+        // raise LPF on first note to accent, otherwise keep low.
+        if(i < 1) {
+            1000 => low.freq;
+        } else if(i > 0) {
+            200 => low.freq;
+        }
+        spork ~ playShort();
+        T => now;
+    }
+    
+    // f
+    76 => root;
+    for(0 => int i; i < f.cap(); i++) {
+        Std.mtof(root + f[i]) => saw.freq;
+        
+        // raise LPF on first note to accent, otherwise keep low.
+        if(i < 1) {
+            1000 => low.freq;
+        } else if(i > 0) {
+            200 => low.freq;
+        }
+        spork ~ playShort();
+        T => now;
+    }
+
 }
 
 
