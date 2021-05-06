@@ -11,13 +11,14 @@
 # 6. If 'y', merge branch to 'main' and delete branch, if 'n', exit.
 
 echo A simple branch, pull, ffmpeg-normalize, .md to .html, push script!
-read -p "What is the directory for this HW? " hw_name
+read -p "What is the brnach name for this HW? " hw_name
+read -p "What is the directory I should look for this HW in ? " dir_name
 
 # pull remote branch into new branch
 git checkout -b $hw_name
 git branch --set-upstream-to origin/$hw_name
 git pull origin $hw_name
-cd $hw_name
+cd $dir_name
 
 # run ffmpeg-normalize
 cd wav
