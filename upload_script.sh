@@ -46,11 +46,10 @@ while true; do
 done
 #
 # check for changes from host side, pull to ccrma dev branch, merge, delete dev
-git branch
 git checkout $hw_name
-git branch
 git pull origin $hw_name
 git checkout main
+git branch
 
 echo All Done!
 echo Run the following commands:
