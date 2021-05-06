@@ -48,9 +48,9 @@ while(true) {
     
     // Density and wait time between notes are inversely related
     // computer inverse of density and set to wait time
-    10/DENSITY * 50 => float min;
+    10/DENSITY * 80 => float min;
     
-    (min + 1 * Math.random2f(0, Math.sqrt(min)))::ms => dur minT;
+    (min + 1 * Math.random2f(0, min/2))::ms => dur minT;
     
     // spork sound
     spork ~ makeSound(60, .1, DENSITY * Math.random2f(.2, .4)::second);

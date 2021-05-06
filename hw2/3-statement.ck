@@ -307,7 +307,7 @@ fun void playBeat(dur T) {
         // computer inverse of density and set to wait time
         10/DENSITY * 50 => float min;
     
-        (min + 500 + 1 * Math.random2f(0, Math.sqrt(min)))::ms => dur minT;
+        (min + 500 + 1 * Math.random2f(0, min/2))::ms => dur minT;
     
         // spork sound
         spork ~ makeBeat(8.0);
