@@ -33,6 +33,8 @@ spork ~ b.run();
 spork ~ c.run();
 spork ~ d.run();
 
+// add drum beat and snare
+
 while(true) {
     
     // wait on kbhit event
@@ -143,4 +145,8 @@ class Shepard {
             T => now;
         }
     }
+}
+
+// DRUM CLASS:
+class Kick {
 }
