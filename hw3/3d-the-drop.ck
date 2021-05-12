@@ -1,24 +1,44 @@
 Shepard a;
+Shepard a3;
 Bass b;
+Kick k;
+
+k.patch(dac);
+k.setGain(1.0);
 
 0.008 => float var;
 a.setINC(var);
+a3.setINC(var);
 
-a.setOffset(12);
+12 => int initFreq;
+
+a.setOffset(initFreq);
+a3.setOffset(initFreq + 4);
+
 a.setOutput(1 => a.output);
+a3.setOutput(1 => a3.output);
 
 spork ~ a.run();
+spork ~ a3.run();
+spork ~ k.sweepKick();
 
-for(var; var < 0.1; 0.01 +=> var) {
+for(var; var < 0.18; 0.01 +=> var) {
+    if(var > 0.04 && var < 0.05) spork ~ a.sweepF(200, 4000);
     a.setINC(var);
     1::second => now;
+    a.setOffset(12 +=> initFreq);
 }
 
 a.setOutput(-1 => a.output);
+a3.setOutput(-1 => a3.output);
 50::ms => now;
 
 spork ~ b.run();
 5::second => now;
+
+spork ~ k.run();
+3::second => now;
+
 
 // Class for Shepard Tone. 
 class Shepard {
@@ -48,15 +68,18 @@ class Shepard {
     // bank of tones
     TriOsc tones[N];
     // overall gain
-    Gain gain; 1.0/N => gain.gain;
+    Gain gain => LPF low; 1.0/N => gain.gain;
+    200 => low.freq;
+    1.0 => low.Q;
+    10.0 => low.gain;
     // connect to dac
     for( int i; i < N; i++ ) { tones[i] => gain; }
     
     // object functions //
     
     fun void setOutput(int var) {
-        if(output == 1) gain => dac;
-        if(output == -1) gain !=> dac;
+        if(output == 1) low => dac;
+        if(output == -1) low !=> dac;
     }
     
     fun void setINC(float var) {
@@ -67,6 +90,18 @@ class Shepard {
         var => OFFSET;
         for(int i; i < N; i++) {
             OFFSET +=> pitches[i];
+        }
+    }
+    
+    fun void sweepF(float min, float max) {
+        
+        min => low.freq;
+        while(max > low.freq()) {
+            // sweep the filter resonant frequency 100 Hz to 2000 Hz
+            20.0 + low.freq() => low.freq;
+            
+            // advance time
+            50::ms => now;
         }
     }
     
@@ -102,20 +137,20 @@ class Shepard {
 }
 
 class Bass {
-    SawOsc osc => LPF lpf => ADSR env => Gain vel => dac;
+    SawOsc osc => ADSR env => LPF lpf => Gain vel => dac;
     SinOsc subOsc => env; // sub oscillator
-    90 => osc.freq;
+    70 => osc.freq;
     
     200 => lpf.freq;
     
     osc.freq()*0.5 => subOsc.freq;
-    0.5 => dac.gain;
+    5.0 => osc.gain;
     
-    env.set(10::ms, 60::ms, 0.1, 100::ms);
+    env.set(40::ms, 80::ms, 0.1, 100::ms);
     
     Noise pluck => BPF bpf => ADSR pluckEnv => dac; // noise to simulate pluck
-    0.9 => pluck.gain;
-    pluckEnv.set(10::ms, 20::ms, 0.0, 100::ms);
+    0.4 => pluck.gain;
+    pluckEnv.set(1::ms, 20::ms, 0.0, 100::ms);
     500 => bpf.freq;
     5 => bpf.Q;
     
@@ -132,7 +167,60 @@ class Bass {
             
             env.keyOff();
             pluckEnv.keyOff();
-            100::ms => now;
+            250::ms => now;
         }
     }
 } 
+
+// DRUM CLASS:
+class Kick {
+    
+    // CLASS CONSTANTS //
+    
+    // SndBuf buf instance
+    SndBuf buf => LPF low;
+    
+    200.0 => low.freq;
+    
+    // sound file
+    me.dir() + "/misc/Electronic-Kick-1.wav" => string filename;
+    if( me.args() ) me.arg(0) => filename;
+    filename => buf.read;
+    
+    // initialize buf.gain
+    1.0 => buf.gain;
+    // initialize buf.rate
+    1.0 => buf.rate;
+    
+    // CLASS FUNCTIONS //
+    
+    fun void patch(UGen u) {
+        low => u;
+    }
+    
+    fun void setGain(float vel) {
+        vel => buf.gain;
+    }
+    
+    fun void setRate(float r) {
+        r => buf.rate;
+    }
+    
+    fun void sweepKick() {
+        // time loop
+        500::ms => dur T;
+        while(true) {
+            0 => buf.pos;
+            T => now;
+            10::ms -=> T;
+        }
+    }
+    
+    fun void run() {
+        // time loop
+        while(true) {
+            0 => buf.pos;
+            500::ms => now;
+        }
+    }
+}

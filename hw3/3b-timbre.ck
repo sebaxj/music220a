@@ -1,6 +1,3 @@
-// add an increasing LPF, from 100 to 2000 to brighten sound quickly
-// in select "var" regions
-
 Shepard a;
 Shepard b;
 
