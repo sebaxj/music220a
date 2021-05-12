@@ -160,7 +160,8 @@ class Kick {
     // CLASS CONSTANTS //
     
     // SndBuf buf instance
-    SndBuf buf;
+    SndBuf buf => LPF low;
+    200.0 => low.freq;
     
     // sound file
     me.dir() + "/misc/Electronic-Kick-1.wav" => string filename;
@@ -175,7 +176,7 @@ class Kick {
     // CLASS FUNCTIONS //
     
     fun void patch(UGen u) {
-        buf => u;
+        low => u;
     }
     
     fun void setGain(float vel) {
