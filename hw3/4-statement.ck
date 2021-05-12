@@ -1,13 +1,53 @@
+Shepard a;
+Shepard a3;
+Kick k;
+Bass b;
+Synth s;
+
+0.008 => float var;
+a.setINC(var);
+a3.setINC(var);
+
+0 => int initFreq;
+
+a.setOffset(initFreq);
+a3.setOffset(initFreq);
+
+//spork ~ s.run();
+//10::second => now;
+
+k.patch(dac);
+k.setGain(1.0);
+spork ~ k.sweepKick();
+13::second => now;
+a.setOutput(1 => a.output);
+a3.setOutput(1 => a3.output);
+spork ~ a.run();
+spork ~ a3.run();
 
 
+for(var; var < 0.18; 0.01 +=> var) {
+    if(var > 0.04 && var < 0.05) spork ~ a.sweepF(200, 4000);
+    a.setINC(var);
+    1::second => now;
+    a.setOffset(12 +=> initFreq);
+}
+for(var; var > 0.008; 0.01 -=> var) {
+    if(var > 0.12 && var < 0.16) spork ~ a.sweepF(4000, 200);
+    a.setINC(var);
+    1::second => now;
+    a.setOffset(12 -=> initFreq);
+}
 
+a.setOutput(-1 => a.output);
+a3.setOutput(-1 => a3.output);
+50::ms => now;
 
+spork ~ b.run();
 
-
-
+while(true) 1::second => now;
 
 /////////////////////////////////////////////////////////////////////////////
-
 
 /////////////////////////////
 // Class for Shepard Tone. //
@@ -114,13 +154,12 @@ class Shepard {
 
 class Bass {
     SawOsc osc => ADSR env => LPF lpf => Gain vel => dac;
-    SinOsc subOsc => env; // sub oscillator
-    70 => osc.freq;
+    Std.mtof(33) => osc.freq;
+    
+    [0, 2, 3, 7, 9] @=> int pent[];
     
     200 => lpf.freq;
-    
-    osc.freq()*0.5 => subOsc.freq;
-    5.0 => osc.gain;
+    1.0 => osc.gain;
     
     env.set(40::ms, 80::ms, 0.1, 100::ms);
     
@@ -132,10 +171,9 @@ class Bass {
     
     fun void run() {
         while (true) {
-            Math.random2f(40, 80) => osc.freq;
-            osc.freq()*0.5 => subOsc.freq;
+            Std.mtof(33 + pent[Math.random2(0, 4)]) => osc.freq;
             
-            Math.random2f(0.7, 1.0) => vel.gain;
+            Math.random2f(5.0, 10.0) => vel.gain;
             env.keyOn();
             pluckEnv.keyOn();
             Math.random2f(400,600) => bpf.freq;
@@ -160,7 +198,7 @@ class Kick {
     SndBuf buf => LPF low;
     
     200.0 => low.freq;
-    
+    .6 => low.gain;    
     // sound file
     me.dir() + "/misc/Electronic-Kick-1.wav" => string filename;
     if( me.args() ) me.arg(0) => filename;
@@ -189,6 +227,9 @@ class Kick {
         // time loop
         500::ms => dur T;
         while(true) {
+            if(T == 10::ms) {
+                500::ms => T;
+            }
             0 => buf.pos;
             T => now;
             10::ms -=> T;
@@ -200,6 +241,98 @@ class Kick {
         while(true) {
             0 => buf.pos;
             500::ms => now;
+        }
+    }
+}
+
+/////////////////
+// SYNTH CLASS //
+/////////////////
+class Synth {
+    // CHORDS ARRAYS //
+    // min
+    [0., 3., 7., 0.] @=> float min[];
+    
+    // min4/2
+    [-2., 0., 3., 7.] @=> float min42[];
+    
+    // dim
+    [-12., 3., 6., 0.] @=> float dim[];
+    
+    // Maj
+    [0., 4., 7., 12.] @=> float maj[];
+    
+    // V7
+    [0., 4., 7., 10.] @=> float v7[];
+    
+    // fully dim 7
+    [0., 3., 6., 9.] @=> float dim7[];
+    ///////////////////
+    
+    // Global UGen //
+    // patch low -> rev -> dax ->
+    LPF low => NRev rev => Gain gain => dac;
+    
+    0.5 => gain.gain;
+    
+    // Set Param for UGen //
+    // mix reverb
+    1.0 => rev.mix;
+    
+    // set LPF
+    500 => low.freq;
+    1 => low.Q;
+    0.5 => low.gain;
+    
+    fun void playChord(int root, float chord[], float vel, 
+    dur a, dur d, float s, dur r)
+    {
+        // ugens "local" to the function
+        TriOsc osc[4];
+        ADSR e => low;
+        
+        // patch
+        for(0 => int i; i < osc.cap(); i++) {
+            osc[i] => e;
+        }
+        
+        // freq and gain
+        for(0 => int i; i < osc.cap(); i++) {
+            Std.mtof(root + chord[i]) => osc[i].freq;
+            vel => osc[i].gain;
+        }
+        
+        
+        // open env (e is your envelope)
+        e.set(a, d, s, r);
+        e.keyOn();
+        
+        // A through end of S
+        e.releaseTime() => now;
+        
+        // close env
+        e.keyOff();
+        
+        // release
+        e.releaseTime() => now;
+    }
+    
+    fun void play(int root, float chord[]) {
+        
+        .5 => float vel;
+        
+        for(0 => int i; i < 8; i++) {
+            playChord(root, chord, vel, 50::ms, 50::ms, 0.5, 100::ms);
+            
+            50::ms => now;
+            vel - .2 => vel;
+        }
+    }
+    
+    fun void run() {
+        while(true) {
+            play(57, min); // am
+            1000::ms => now;
         }
     }
 }
