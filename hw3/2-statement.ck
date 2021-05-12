@@ -8,6 +8,11 @@
 // keyboard event class instance
 KBHit kb;
 
+Kick k;
+
+k.patch(dac);
+k.setGain(1.0);
+
 Shepard a;
 Shepard b;
 Shepard c;
@@ -33,7 +38,9 @@ spork ~ b.run();
 spork ~ c.run();
 spork ~ d.run();
 
-// add drum beat and snare
+spork ~ k.run();
+
+
 
 while(true) {
     
@@ -41,7 +48,7 @@ while(true) {
     kb => now;
     
     // potentially more than 1 key at a time
-    while( kb.more() )
+    while(kb.more())
     { 
         kb.getchar() => int ascii;
         
@@ -100,16 +107,16 @@ class Shepard {
     
     // object functions //
     
-    fun UGen setOutput(int var) {
+    fun void setOutput(int var) {
         if(output == 1) gain => dac;
         if(output == -1) gain !=> dac;
     }
     
-    fun float setINC(float var) {
+    fun void setINC(float var) {
         var => INC;
     }
     
-    fun float setOffset(float var) {
+    fun void setOffset(float var) {
         var => OFFSET;
         for(int i; i < N; i++) {
             OFFSET +=> pitches[i];
@@ -125,8 +132,8 @@ class Shepard {
     
     fun void run() {
         // infinite time loop
-        while( true ) {
-            for( int i; i < N; i++ ) {
+        while(true) {
+            for(int i; i < N; i++) {
                 // set frequency from pitch
                 pitches[i] => Std.mtof => tones[i].freq;
                 // compute loundess for each tone
@@ -149,4 +156,41 @@ class Shepard {
 
 // DRUM CLASS:
 class Kick {
+
+    // CLASS CONSTANTS //
+    
+    // SndBuf buf instance
+    SndBuf buf;
+    
+    // sound file
+    me.dir() + "/misc/Electronic-Kick-1.wav" => string filename;
+    if( me.args() ) me.arg(0) => filename;
+    filename => buf.read;
+    
+    // initialize buf.gain
+    1.0 => buf.gain;
+    // initialize buf.rate
+    1.0 => buf.rate;
+    
+    // CLASS FUNCTIONS //
+    
+    fun void patch(UGen u) {
+        buf => u;
+    }
+    
+    fun void setGain(float vel) {
+        vel => buf.gain;
+    }
+    
+    fun void setRate(float r) {
+        r => buf.rate;
+    }
+    
+    fun void run() {
+        // time loop
+        while(true) {
+            0 => buf.pos;
+            500::ms => now;
+        }
+    }
 }
