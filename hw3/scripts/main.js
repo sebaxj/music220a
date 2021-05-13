@@ -22,10 +22,10 @@ let curr_track = document.createElement('audio');
 // Define the tracks that have to be played
 let track_list = [
   {
-    name: "220A HW 1",
+    name: "220A HW 3 Final Statement",
     artist: "Sebastian James",
     image: "https://images.pexels.com/photos/2264753/pexels-photo-2264753.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=250&w=250",
-    path: "https://ccrma.stanford.edu/~sebaxj/220a/hw3/part5.wav"
+    path: "https://ccrma.stanford.edu/~sebaxj/4-statement.wav"
   },
 ];
 
