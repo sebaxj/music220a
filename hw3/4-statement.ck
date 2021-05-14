@@ -19,20 +19,59 @@ spork ~ k.sweepKick();
 a.setINC(var);
 a3.setINC(var);
 a3.setOffset(initFreq + 4);
+spork ~ a.sweepF(50, 1000);
+spork ~ a3.sweepF(50, 1000);
 a.setOutput(1 => a.output);
 a3.setOutput(1 => a3.output);
 spork ~ a.run();
 spork ~ a3.run();
-13::second => now;
+5::second => now;
+
+spork ~ a.sweepF(1000, 100);
+spork ~ a3.sweepF(1000, 100);
+5::second => now;
+
+spork ~ a.sweepF(100, 2000);
+spork ~ a3.sweepF(100, 2000);
+3::second => now;
 
 a.setOutput(-1 => a.output);
 a3.setOutput(-1 => a3.output);
+spork ~ a.sweepF(2000, 500);
+spork ~ a3.sweepF(2000, 500);
+
 50::ms => now;
 spork ~ b.run();
 
 12600::ms => now;
 // kick finish
 
+// repeat shepard tones with rev sweep
+spork ~ a.sweepRev(0.0, 1.0);
+spork ~ a3.sweepRev(0.0, 1.0);
+a.setOutput(1 => a.output);
+a3.setOutput(1 => a3.output);
+spork ~ a.run();
+spork ~ a3.run();
+5::second => now;
+
+spork ~ a.sweepRev(1.0, 0.1);
+spork ~ a3.sweepRev(1.0, 0.1);
+5::second => now;
+
+spork ~ a.sweepF(0.1, 2.0);
+spork ~ a3.sweepF(0.1, 2.0);
+3::second => now;
+
+a.setOutput(-1 => a.output);
+a3.setOutput(-1 => a3.output);
+k.patch(blackhole);
+
+4000::ms => now;
+spork ~ b.run();
+
+8650::ms => now;
+// kick finish
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -90,7 +129,7 @@ class Shepard {
     fun void setINC(float var) {
         var => INC;
     }
-    
+
     fun void setOffset(float var) {
         var => OFFSET;
         for(int i; i < N; i++) {
