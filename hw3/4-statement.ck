@@ -1,51 +1,39 @@
 Shepard a;
 Shepard a3;
-Kick k;
 Bass b;
+Kick k;
 Synth s;
 
+// start with kick and synth
+k.setGain(0.8);
 0.008 => float var;
-a.setINC(var);
-a3.setINC(var);
-
 0 => int initFreq;
 
-a.setOffset(initFreq);
-a3.setOffset(initFreq);
-
-//spork ~ s.run();
-//10::second => now;
+spork ~ s.run();
 
 k.patch(dac);
-k.setGain(1.0);
 spork ~ k.sweepKick();
 13::second => now;
+
+// fade shepard tones in
+a.setINC(var);
+a3.setINC(var);
+a3.setOffset(initFreq + 4);
 a.setOutput(1 => a.output);
 a3.setOutput(1 => a3.output);
 spork ~ a.run();
 spork ~ a3.run();
-
-
-for(var; var < 0.18; 0.01 +=> var) {
-    if(var > 0.04 && var < 0.05) spork ~ a.sweepF(200, 4000);
-    a.setINC(var);
-    1::second => now;
-    a.setOffset(12 +=> initFreq);
-}
-for(var; var > 0.008; 0.01 -=> var) {
-    if(var > 0.12 && var < 0.16) spork ~ a.sweepF(4000, 200);
-    a.setINC(var);
-    1::second => now;
-    a.setOffset(12 -=> initFreq);
-}
+13::second => now;
 
 a.setOutput(-1 => a.output);
 a3.setOutput(-1 => a3.output);
 50::ms => now;
-
 spork ~ b.run();
 
-while(true) 1::second => now;
+12600::ms => now;
+// kick finish
+
+
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -80,18 +68,23 @@ class Shepard {
     // bank of tones
     TriOsc tones[N];
     // overall gain
-    Gain gain => LPF low; 1.0/N => gain.gain;
+    Gain gain => LPF low => NRev rev; 1.0/N => gain.gain;
     200 => low.freq;
     1.0 => low.Q;
     10.0 => low.gain;
+    
+    // initial reverb mix is 0.0
+    0.0 => rev.mix;
+    1.0 => rev.gain;
+    
     // connect to dac
     for( int i; i < N; i++ ) { tones[i] => gain; }
     
     // object functions //
     
     fun void setOutput(int var) {
-        if(output == 1) low => dac;
-        if(output == -1) low !=> dac;
+        if(output == 1) rev => dac;
+        if(output == -1) rev !=> dac;
     }
     
     fun void setINC(float var) {
@@ -107,13 +100,43 @@ class Shepard {
     
     fun void sweepF(float min, float max) {
         
-        min => low.freq;
-        while(max > low.freq()) {
-            // sweep the filter resonant frequency 100 Hz to 2000 Hz
-            20.0 + low.freq() => low.freq;
-            
-            // advance time
-            50::ms => now;
+        if(min < max) {
+            min => low.freq;
+            while(max > low.freq()) {
+                20.0 + low.freq() => low.freq;
+                
+                // advance time
+                50::ms => now;
+            }
+        } else if(min > max) {
+            min => low.freq;
+            while(max < low.freq()) {
+                low.freq() - 20.0 => low.freq;
+                
+                // advance time
+                50::ms => now;
+            }
+        }
+    }
+    
+    fun void sweepRev(float min, float max) {
+        
+        if(min < max) {
+            min => rev.mix;
+            while(max > rev.mix()) {
+                .01 + rev.mix() => rev.mix;
+                
+                // advance time
+                10::ms => now;
+            }
+        } else if(min > max) {
+            min => rev.mix;
+            while(max > rev.mix()) {
+                rev.mix() - .01 => rev.mix;
+                
+                // advance time
+                10::ms => now; 
+            }
         }
     }
     
@@ -156,24 +179,27 @@ class Bass {
     SawOsc osc => ADSR env => LPF lpf => Gain vel => dac;
     Std.mtof(33) => osc.freq;
     
-    [0, 2, 3, 7, 9] @=> int pent[];
+    [3, 5, 7, 10, 10, 10, 12] @=> int pent[];
     
     200 => lpf.freq;
-    1.0 => osc.gain;
+    0.6 => osc.gain;
     
     env.set(40::ms, 80::ms, 0.1, 100::ms);
     
-    Noise pluck => BPF bpf => ADSR pluckEnv => dac; // noise to simulate pluck
-    0.4 => pluck.gain;
+    Noise pluck => BPF bpf => ADSR pluckEnv => vel; // noise to simulate pluck
+    0.2 => pluck.gain;
     pluckEnv.set(1::ms, 20::ms, 0.0, 100::ms);
     500 => bpf.freq;
     5 => bpf.Q;
     
+    0 => int i;
+    
     fun void run() {
         while (true) {
-            Std.mtof(33 + pent[Math.random2(0, 4)]) => osc.freq;
+            if(i > 6) 0 => i;
+            Std.mtof(33 + pent[i]) => osc.freq;
             
-            Math.random2f(5.0, 10.0) => vel.gain;
+            Math.random2f(4.0, 6.0) => vel.gain;
             env.keyOn();
             pluckEnv.keyOn();
             Math.random2f(400,600) => bpf.freq;
@@ -182,6 +208,8 @@ class Bass {
             env.keyOff();
             pluckEnv.keyOff();
             250::ms => now;
+            
+            1 +=> i;
         }
     }
 } 
@@ -198,7 +226,7 @@ class Kick {
     SndBuf buf => LPF low;
     
     200.0 => low.freq;
-    .6 => low.gain;    
+    .8 => low.gain;    
     // sound file
     me.dir() + "/misc/Electronic-Kick-1.wav" => string filename;
     if( me.args() ) me.arg(0) => filename;
@@ -248,6 +276,7 @@ class Kick {
 /////////////////
 // SYNTH CLASS //
 /////////////////
+
 class Synth {
     // CHORDS ARRAYS //
     // min
@@ -273,15 +302,15 @@ class Synth {
     // patch low -> rev -> dax ->
     LPF low => NRev rev => Gain gain => dac;
     
-    0.5 => gain.gain;
+    0.4 => gain.gain;
     
     // Set Param for UGen //
     // mix reverb
-    1.0 => rev.mix;
+    0.2 => rev.mix;
     
     // set LPF
     500 => low.freq;
-    1 => low.Q;
+    0.8 => low.Q;
     0.5 => low.gain;
     
     fun void playChord(int root, float chord[], float vel, 

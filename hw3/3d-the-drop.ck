@@ -22,7 +22,7 @@ spork ~ a.run();
 spork ~ a3.run();
 spork ~ k.sweepKick();
 
-for(var; var < 0.18; 0.01 +=> var) {
+for(var; var < 0.13; 0.01 +=> var) {
     if(var > 0.04 && var < 0.05) spork ~ a.sweepF(200, 4000);
     a.setINC(var);
     1::second => now;
