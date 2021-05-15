@@ -10,67 +10,55 @@ k.setGain(0.8);
 0 => int initFreq;
 
 spork ~ s.run();
+s.patch(1);
 
-k.patch(dac);
 spork ~ k.sweepKick();
+k.patch(1);
 13::second => now;
 
 // fade shepard tones in
 a.setINC(var);
 a3.setINC(var);
 a3.setOffset(initFreq + 4);
-spork ~ a.sweepF(50, 1000);
-spork ~ a3.sweepF(50, 1000);
-a.setOutput(1 => a.output);
-a3.setOutput(1 => a3.output);
+spork ~ a.sweepF(50, 1000, 0.001);
+spork ~ a3.sweepF(50, 1000, 0.1);
 spork ~ a.run();
 spork ~ a3.run();
+a.setOutput(1);
+a3.setOutput(1);
 5::second => now;
 
-spork ~ a.sweepF(1000, 100);
-spork ~ a3.sweepF(1000, 100);
 5::second => now;
 
-spork ~ a.sweepF(100, 2000);
-spork ~ a3.sweepF(100, 2000);
-3::second => now;
+2500::ms => now;
+// kick drop
 
-a.setOutput(-1 => a.output);
-a3.setOutput(-1 => a3.output);
-spork ~ a.sweepF(2000, 500);
-spork ~ a3.sweepF(2000, 500);
+a.setOutput(0);
+a3.setOutput(0);
 
 50::ms => now;
 spork ~ b.run();
+b.patch(1);
 
 12600::ms => now;
 // kick finish
 
 // repeat shepard tones with rev sweep
-spork ~ a.sweepRev(0.0, 1.0);
-spork ~ a3.sweepRev(0.0, 1.0);
-a.setOutput(1 => a.output);
-a3.setOutput(1 => a3.output);
+spork ~ a3.sweepRev(0.0, 0.3, 0.01);
+a.setOutput(1);
+a3.setOutput(1);
 spork ~ a.run();
 spork ~ a3.run();
-5::second => now;
+13::second => now;
 
-spork ~ a.sweepRev(1.0, 0.1);
-spork ~ a3.sweepRev(1.0, 0.1);
-5::second => now;
+// fade shepard tones out
 
-spork ~ a.sweepF(0.1, 2.0);
-spork ~ a3.sweepF(0.1, 2.0);
-3::second => now;
+a.setOutput(0);
+a3.setOutput(0);
+k.patch(0);
+s.patch(0);
 
-a.setOutput(-1 => a.output);
-a3.setOutput(-1 => a3.output);
-k.patch(blackhole);
-
-4000::ms => now;
-spork ~ b.run();
-
-8650::ms => now;
+12150::ms => now;
 // kick finish
 
 
@@ -96,8 +84,6 @@ class Shepard {
     1::ms => dur T;
     // initialize INC var with a default variable
     0.004 => float INC;
-    // initialize output var: 1 = dac, -1 = disconnect
-    int output;
     
     // starting pitches (in MIDI note numbers, octaves apart)
     [ 12.0, 24, 36, 48, 60, 72, 84, 96, 108, 120 ] @=> float pitches[];
@@ -107,10 +93,14 @@ class Shepard {
     // bank of tones
     TriOsc tones[N];
     // overall gain
-    Gain gain => LPF low => NRev rev; 1.0/N => gain.gain;
+    Gain gain => LPF low => NRev rev; 
+    1.0/N => gain.gain;
+    
+    Gain master => dac;
+    
     200 => low.freq;
     1.0 => low.Q;
-    10.0 => low.gain;
+    6.0 => low.gain;
     
     // initial reverb mix is 0.0
     0.0 => rev.mix;
@@ -122,8 +112,8 @@ class Shepard {
     // object functions //
     
     fun void setOutput(int var) {
-        if(output == 1) rev => dac;
-        if(output == -1) rev !=> dac;
+        if(var == 1) rev => master;
+        if(var == 0) rev !=> master;
     }
     
     fun void setINC(float var) {
@@ -137,46 +127,35 @@ class Shepard {
         }
     }
     
-    fun void sweepF(float min, float max) {
-        
-        if(min < max) {
-            min => low.freq;
-            while(max > low.freq()) {
-                20.0 + low.freq() => low.freq;
-                
-                // advance time
-                50::ms => now;
-            }
-        } else if(min > max) {
-            min => low.freq;
-            while(max < low.freq()) {
-                low.freq() - 20.0 => low.freq;
-                
-                // advance time
-                50::ms => now;
-            }
+    fun void sweepF(float min, float max, float interval) {
+        // float to track next wave number
+        0.0 => float t;
+        while(true) {
+            // sweep the filter resonant frequency 100 Hz to 800 Hz
+            min + Std.fabs(Math.sin(t)) * max => low.freq;
+            
+            t + interval => t;
+            
+            // advance time
+            10::ms => now;
         }
     }
     
-    fun void sweepRev(float min, float max) {
-        
-        if(min < max) {
-            min => rev.mix;
-            while(max > rev.mix()) {
-                .01 + rev.mix() => rev.mix;
-                
-                // advance time
-                10::ms => now;
-            }
-        } else if(min > max) {
-            min => rev.mix;
-            while(max > rev.mix()) {
-                rev.mix() - .01 => rev.mix;
-                
-                // advance time
-                10::ms => now; 
-            }
+    fun void sweepRev(float min, float max, float interval) {
+        0.0 => float t;
+        while(true) {
+            // sweep the rev mix from min to max
+            min + Std.fabs(Math.sin(t)) * max => rev.mix;
+            
+            t + interval => t;
+            
+            // advance time
+            100::ms => now;
         }
+    }
+    
+    fun void fadeMaster(float min, float max, float interval) {
+        // TODO
     }
     
     // normal function for loudness curve
@@ -215,7 +194,7 @@ class Shepard {
 ////////////////
 
 class Bass {
-    SawOsc osc => ADSR env => LPF lpf => Gain vel => dac;
+    SawOsc osc => ADSR env => LPF lpf => Gain vel;
     Std.mtof(33) => osc.freq;
     
     [3, 5, 7, 10, 10, 10, 12] @=> int pent[];
@@ -230,6 +209,11 @@ class Bass {
     pluckEnv.set(1::ms, 20::ms, 0.0, 100::ms);
     500 => bpf.freq;
     5 => bpf.Q;
+    
+    fun void patch(int var) {
+        if(var == 1) vel => dac;
+        if(var == 0) vel !=> dac;
+    }
     
     0 => int i;
     
@@ -262,10 +246,12 @@ class Kick {
     // CLASS CONSTANTS //
     
     // SndBuf buf instance
-    SndBuf buf => LPF low;
+    SndBuf buf => LPF low => Gain gain;
     
     200.0 => low.freq;
-    .8 => low.gain;    
+    .8 => low.gain;   
+    1.0 => gain.gain;
+     
     // sound file
     me.dir() + "/misc/Electronic-Kick-1.wav" => string filename;
     if( me.args() ) me.arg(0) => filename;
@@ -278,8 +264,9 @@ class Kick {
     
     // CLASS FUNCTIONS //
     
-    fun void patch(UGen u) {
-        low => u;
+    fun void patch(int var) {
+        if(var == 1) gain => dac;
+        if(var == 0) gain !=> dac;
     }
     
     fun void setGain(float vel) {
@@ -339,7 +326,7 @@ class Synth {
     
     // Global UGen //
     // patch low -> rev -> dax ->
-    LPF low => NRev rev => Gain gain => dac;
+    LPF low => NRev rev => Gain gain;
     
     0.4 => gain.gain;
     
@@ -383,6 +370,11 @@ class Synth {
         
         // release
         e.releaseTime() => now;
+    }
+    
+    fun void patch(int var) {
+        if(var == 1) gain => dac;
+        if(var == 0) gain !=> dac;
     }
     
     fun void play(int root, float chord[]) {
