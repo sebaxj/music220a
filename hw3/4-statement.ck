@@ -1,5 +1,7 @@
 Shepard a;
 Shepard a3;
+Shepard b1;
+Shepard b3;
 Bass b;
 Kick k;
 Synth s;
@@ -20,12 +22,17 @@ k.patch(1);
 a.setINC(var);
 a3.setINC(var);
 a3.setOffset(initFreq + 4);
-spork ~ a.sweepF(50, 1000, 0.001);
-spork ~ a3.sweepF(50, 1000, 0.1);
+b1.setINC(var);
+b3.setINC(var);
+b3.setOffset(initFreq + 4);
 spork ~ a.run();
 spork ~ a3.run();
 a.setOutput(1);
 a3.setOutput(1);
+spork ~ a.fadeMaster(0.0, 1.0, 0.01);
+spork ~ a3.fadeMaster(0.0, 1.0, 0.01);
+spork ~ a.sweepF(50, 2000, 0.001);
+spork ~ a3.sweepF(50, 1000, 0.1);
 5::second => now;
 
 5::second => now;
@@ -33,6 +40,8 @@ a3.setOutput(1);
 2500::ms => now;
 // kick drop
 
+a.fadeMaster(1.0, 0.0, 0.01);
+a3.fadeMaster(1.0, 0.0, 0.01);
 a.setOutput(0);
 a3.setOutput(0);
 
@@ -44,21 +53,25 @@ b.patch(1);
 // kick finish
 
 // repeat shepard tones with rev sweep
-spork ~ a3.sweepRev(0.0, 0.3, 0.01);
-a.setOutput(1);
-a3.setOutput(1);
-spork ~ a.run();
-spork ~ a3.run();
+spork ~ b1.run();
+spork ~ b3.run();
+b1.setOutput(1);
+b3.setOutput(1);
+spork ~ b1.fadeMaster(0.0, 1.0, 0.01);
+spork ~ b3.fadeMaster(0.0, 1.0, 0.01);
+spork ~ b1.sweepF(50, 2000, 0.001);
+spork ~ b3.sweepF(50, 1000, 0.1);
+spork ~ b3.sweepRev(0.0, 0.3, 0.01);
 13::second => now;
 
-// fade shepard tones out
-
-a.setOutput(0);
-a3.setOutput(0);
+b1.fadeMaster(1.0, 0.0, 0.01);
+b3.fadeMaster(1.0, 0.0, 0.01);
+b1.setOutput(0);
+b3.setOutput(0);
 k.patch(0);
 s.patch(0);
 
-12150::ms => now;
+11600::ms => now;
 // kick finish
 
 
@@ -93,10 +106,8 @@ class Shepard {
     // bank of tones
     TriOsc tones[N];
     // overall gain
-    Gain gain => LPF low => NRev rev; 
+    Gain gain => LPF low => NRev rev => Gain master; 
     1.0/N => gain.gain;
-    
-    Gain master => dac;
     
     200 => low.freq;
     1.0 => low.Q;
@@ -105,6 +116,7 @@ class Shepard {
     // initial reverb mix is 0.0
     0.0 => rev.mix;
     1.0 => rev.gain;
+    0.0 => master.gain;
     
     // connect to dac
     for( int i; i < N; i++ ) { tones[i] => gain; }
@@ -112,8 +124,8 @@ class Shepard {
     // object functions //
     
     fun void setOutput(int var) {
-        if(var == 1) rev => master;
-        if(var == 0) rev !=> master;
+        if(var == 1) master => dac;
+        if(var == 0) master !=> dac;
     }
     
     fun void setINC(float var) {
@@ -155,7 +167,19 @@ class Shepard {
     }
     
     fun void fadeMaster(float min, float max, float interval) {
-        // TODO
+        if(min < max) {
+            while(master.gain() < max) {
+                master.gain() + interval => master.gain;
+                
+                10::ms => now;
+            }
+        } else if(min > max) {
+            while(master.gain() > min) {
+                master.gain() - interval => master.gain;
+                
+                10::ms => now;
+            }
+        }
     }
     
     // normal function for loudness curve
