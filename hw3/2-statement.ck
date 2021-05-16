@@ -1,11 +1,8 @@
-// initialize instance of object
-// set offset of each object
-// set asc/dec and speed for each
-// connect object to dac
-// spork object function to run
-// loop time
-
-// keyboard event class instance
+///////////////////////////////////
+// spacebar key = play/pause     //
+//                               //
+// 'w' key = ascending/decending //
+///////////////////////////////////.
 KBHit kb;
 
 Kick k;

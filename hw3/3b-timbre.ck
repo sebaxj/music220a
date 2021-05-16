@@ -1,15 +1,20 @@
 Shepard a;
+Shepard a3;
 Shepard b;
 
 0.008 => float var;
 a.setINC(var);
+a3.setINC(var);
 
 12 => int initFreq;
 
 a.setOffset(initFreq);
+a3.setOffset(initFreq + 3);
 a.setOutput(1 => a.output);
+a3.setOutput(1 => a3.output);
 
 spork ~ a.run();
+spork ~ a3.run();
 
 for(var; var < 0.18; 0.01 +=> var) {
     if(var > 0.04 && var < 0.05) spork ~ a.sweepF(200, 4000);
@@ -19,13 +24,14 @@ for(var; var < 0.18; 0.01 +=> var) {
 }
 
 a.setOutput(-1 => a.output);
+a3.setOutput(-1 => a.output);
 
 b.setINC(-0.004);
 b.setOutput(1 => b.output);
 
 spork ~ b.run();
 
-while(true) 10::second => now;
+while(true) 1::second => now;
 
 // Class for Shepard Tone. 
 class Shepard {

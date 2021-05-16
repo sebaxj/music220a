@@ -5,6 +5,11 @@
 // spork object function to run
 // loop time
 
+///////////////////////////////////
+// spacebar key = play/pause     //
+//                               //
+// 'w' key = ascending/decending //
+///////////////////////////////////.
 // keyboard event class instance
 KBHit kb;
 

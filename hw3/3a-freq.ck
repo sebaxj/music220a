@@ -1,5 +1,8 @@
 Shepard a;
 Shepard b;
+Kick k;
+
+k.setGain(1.0);
 
 0.008 => float var;
 a.setINC(var);
@@ -22,6 +25,8 @@ a.setOutput(-1 => a.output);
 b.setINC(-0.004);
 b.setOutput(1 => b.output);
 
+k.patch(dac);
+spork ~ k.run();
 spork ~ b.run();
 
 while(true) 10::second => now;
@@ -103,6 +108,59 @@ class Shepard {
             
             // advance time
             T => now;
+        }
+    }
+}
+
+// DRUM CLASS:
+class Kick {
+    
+    // CLASS CONSTANTS //
+    
+    // SndBuf buf instance
+    SndBuf buf => LPF low;
+    
+    200.0 => low.freq;
+    
+    // sound file
+    me.dir() + "/misc/Electronic-Kick-1.wav" => string filename;
+    if( me.args() ) me.arg(0) => filename;
+    filename => buf.read;
+    
+    // initialize buf.gain
+    1.0 => buf.gain;
+    // initialize buf.rate
+    1.0 => buf.rate;
+    
+    // CLASS FUNCTIONS //
+    
+    fun void patch(UGen u) {
+        low => u;
+    }
+    
+    fun void setGain(float vel) {
+        vel => buf.gain;
+    }
+    
+    fun void setRate(float r) {
+        r => buf.rate;
+    }
+    
+    fun void sweepKick() {
+        // time loop
+        500::ms => dur T;
+        while(true) {
+            0 => buf.pos;
+            T => now;
+            10::ms -=> T;
+        }
+    }
+    
+    fun void run() {
+        // time loop
+        while(true) {
+            0 => buf.pos;
+            500::ms => now;
         }
     }
 }
