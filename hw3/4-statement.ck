@@ -7,7 +7,7 @@ Kick k;
 Synth s;
 
 // start with kick and synth
-k.setGain(0.8);
+k.setGain(2.0);
 0.008 => float var;
 0 => int initFreq;
 
@@ -246,7 +246,7 @@ class Bass {
             if(i > 6) 0 => i;
             Std.mtof(33 + pent[i]) => osc.freq;
             
-            Math.random2f(4.0, 6.0) => vel.gain;
+            Math.random2f(5.0, 7.0) => vel.gain;
             env.keyOn();
             pluckEnv.keyOn();
             Math.random2f(400,600) => bpf.freq;
