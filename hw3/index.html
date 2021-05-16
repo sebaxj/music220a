@@ -11,12 +11,77 @@
   Milestone Assignment:<br>
   <br>
   Part 1: <br>
+  <br>
+  Here, I employed some of the techniques used by J.S. Bach and Kruetzer to build compound melody lines
+  using rhythmic repetition, and melodic repetition transposed up or down each iteration. In my examples, 
+  I use one bass note, increasing, followed by a short scalar repetition of high notes. To build on each example
+  I used gain and timbre to further accentuate the bass versus treble lines. <br>
   <a href='./wav/1a-tempo.wav'><button>1a-tempo WAV</button></a> <br>
   <a href='./1a-tempo.ck'><button>1a-tempo code</button></a> <br>
   <a href='./wav/1b-velocity-timbre.wav'><button>1b-velocity-timbre WAV</button></a> <br>
   <a href='./1b-velocity-timbre.ck'><button>1b-velocity-timbre code</button></a> <br>
+  <br>
+  Part 1 Statement: <br>
   <a href='./wav/1c-etude.wav'><button>1c-etude WAV</button></a> <br>
   <a href='./1c-etude.ck'><button>1c-etude code</button></a> <br>
   <br>
+  Part 2: <br>
+  <br>
+  In this part of the assignment, I used Shepard Tones, refactored into classes, to build an auditory
+  illusion of infinitely increasing or decreasing tones. Using the 'INC' variable, I am able to control whether
+  the tone is increasing (positive float), decreasing (negative float), fast interval changes (higher absolute float), 
+  or slower interval changes (slower absolute float). <br>
+  <a href='./wav/2a-direction.wav'><button>2a-direction WAV</button></a> <br>
+  <a href='./2a-direction.ck'><button>2a-direction code</button></a> <br>
+  <a href='./wav/2b-speed.wav'><button>2b-speed WAV</button></a> <br>
+  <a href='./2b-speed.ck'><button>2b-speed code</button></a> <br>
+  <a href='./wav/2c-stack.wav'><button>2c-stack WAV</button></a> <br>
+  <a href='./2c-stack.ck'><button>2c-stack code</button></a> <br>
+  <br>
+  In 2d and the statement, I wrote code to take in keyboard events to control the direction of the Shepard Tones,
+  and whether they are playing or paused. The space bar key toggles sound on or off, and the 'w' key controls the
+  Shepard Tone direction. <br>
+  <a href='./wav/2d-stop-and-go.wav'><button>2d-stop-and-go WAV</button></a> <br>
+  <a href='./2d-stop-and-go.ck'><button>2d-stop-and-go code</button></a> <br>
+  <br>
+  Part 2 Statement: <br>
+  <a href='./wav/2-statement.wav'><button>2-statement WAV</button></a> <br>
+  <a href='./2-statement.ck'><button>2-statement code</button></a> <br>
+  <br>
+  Part 3: <br>
+  <br>
+  When brainstorming creativity for this part, I analyzed a few of my favorite drops. 
+  The first is "Nique la BAC", by Lorenzo. This is a french rap song which approaches
+  the drop first with silence alternating with police sirens, and then a frequency based drop
+  with a sudden surge of bass/kick drum. The second song I analyzed is Without You (ft. Sandro Cavazza), by
+  Avicii. Here, the drop builds over many measures, with only high frequencies present. When the song "drops",
+  a heavy bass drum is introduced and the vocals cut out. As you will see, I reflect on this method and employ it
+  heavily in my Part 3 and 4 using a kick drum sample and a LPF sweep. <br>
+  <a href='./wav/3a-freq.wav'><button>3a-freq WAV</button></a> <br>
+  <a href='./3a-freq.ck'><button>3a-freq code</button></a> <br>
+  <a href='./wav/3b-timbre.wav'><button>3b-timbre WAV</button></a> <br>
+  <a href='./3b-timbre.ck'><button>3b-timbre code</button></a> <br>
+  <a href='./wav/3c-time.wav'><button>3c-time WAV</button></a> <br>
+  <a href='./3c-time.ck'><button>3c-time code</button></a> <br>
+  <br>
+  Part 3 Statement: <br>
+  <a href='./wav/3d-the-drop.wav'><button>3d-the-drop WAV</button></a> <br>
+  <a href='./3d-the-drop.ck'><button>3d-the-drop code</button></a> <br>
+  <br>
+  Part 4 Statement, She-vicii, Sebastian James: <br>
+  <br>
+  My statement was inspired by all the previous code for this assignment. Firstly, I have a kick drum sample
+  which is played throughout the piece with a SndBuf. With the kick drum I added a basic Am chord synth which 
+  plays with the kick drum. On top of that I played two instances of Shepard Tones in a minor third interval. 
+  In the first Shepard Tone section I used a LPF to sweep the resonant filter frequency of both instances. 
+  This created an interesting dichotomy where instead of the TriOsc waves being synched, there was 
+  space between them which grew and shrunk, creating a pulsating soundscape. When the kick drum increased 
+  in rhythm and approached "dropped", the Shepard Tones cut out and a bass guitar was introduced with a riff I programmed in.
+  After a few iterations of this, the bass guitar, kick drum, and synth playing solo, the Shepard Tones in a
+  minor third interval are faded back in. This time, however, a reverb filter is swept over the minor third tone (Shepard b3), 
+  increasing to create a heavier and larger space until everything cuts out on the last drop and the bass guitar 
+  plays the riff to finale. <br>
+  <a href='./wav/4-statement.wav'><button>4-statement WAV</button></a> <br>
+  <a href='./4-statement.ck'><button>4-statement code</button></a> <br>
   </body>
 </html>
