@@ -9,4 +9,14 @@
     * [Processing and ChucK](https://processing.org/discourse/beta/num_1203578116.html)
     * [Capture/Video Library](https://processing.org/reference/libraries/video/Capture.html)
     * [Example code](https://processing.org/tutorials/video/)
-2. 
+    * Potential Issue: It appears that **OSX Catalina** has dropped support for 32-bit compiled software. The *Video* library is 32-bit compiled so I receive the error:  
+    ```
+    Could not run the sketch (Target VM failed to initialize)  
+    ```  
+    * Potential workaround: dual-boot from Linux to develop final project in order to compile 32-bit libraries.
+    * codebase:  
+        * [ChucK OSC send](./lib/OSC_send.ck)
+        * [ChucK OSC receive](./lib/OSC_recv.ck)
+        * [Processing Webcam Input](./webcam_input/webcam_input.pde)
+2. Software to package ChucK code/wav file as NFT.
+3. ChucK code to interpret entropy (random sound from the environment imported by **adc**) and playback through **dac** as organized polyphony. 
