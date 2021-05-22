@@ -1,0 +1,6 @@
+# Script to make final project
+echo Making final
+echo Running Procecssing...
+cd ~
+./processing-java --sketch=/Users/sebastianjames/src/music220a/final/lib/BackgroundSubtraction --run
+echo Exitiing...
