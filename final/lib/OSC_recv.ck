@@ -3,7 +3,7 @@
 // the patch
 SndBuf buf => dac;
 // load the file
-me.dir(-1) + "data/snare.wav" => buf.read;
+me.dir(-1) + "../Electronic-Kick-1.wav" => buf.read;
 // don't play yet
 0 => buf.play; 
 
@@ -12,7 +12,7 @@ OscIn oin;
 // create our OSC message
 OscMsg msg;
 // use port 6449
-6449 => oin.port;
+12000 => oin.port;
 // create an address in the receiver
 oin.addAddress( "/sndbuf/buf/rate, f" );
 
