@@ -1,0 +1,74 @@
+<h1 id="final-project-sebastian-james-music-220a-spring-2021">
+  Final Project - Sebastian James | Music 220A | Spring 2021
+</h1>
+<h2 id="milestone-2-">Milestone 2:</h2>
+<h3
+  id="my-final-project-using-frame-differentiation-on-video-input-in-processing-and-piping-the-measure-of-difference-to-chuck-over-osc-to-generate-audio-with-corresponding-density-"
+>
+  My Final Project: Using <strong>frame differentiation</strong> on
+  <strong>video input in Processing</strong> and piping the measure of
+  difference to <strong>ChucK over OSC</strong> to generate
+  <strong>audio with corresponding density</strong>
+</h3>
+<p>
+  In the <code>/final/</code> repository, run <code>sh make.sh</code> to to
+  execute program.<br /><a href="../app/app.pde">app code: Processing</a
+  ><br /><a href="../app/OSC_recv.ck">app code: ChucK</a>
+</p>
+<h3 id="processing-side-">Processing side:</h3>
+<p>
+  As of now, I am determining the best algorithm to process video using frame
+  differentiation. Below I have included screenshots of the two algorithms I am
+  toying with. In one, red contours are used to visualize the motion that the
+  program interprets against a background. This is known as
+  <strong>background subtraction</strong>. This is built upon the OpenCV library
+  for Processing using image subtraction and filtering (blur, gray-scale) to
+  mitigate noise.
+</p>
+<p>
+  The second algorithm uses pure <strong>frame differentiation</strong> using a
+  mask of the prev movie frame over the current frame and displaying the result
+  in gray-scale.
+</p>
+<p>
+  In both instances, the program outputs an integer
+  <em>frame difference variable</em> as the scale of variability between frames.
+  It is from this value that I am going to build a
+  <em>level of motion density</em> variable which will be sent to ChucK over
+  OSC.
+</p>
+<p>
+  Background Subtraction with OpenCV Example:<br /><img
+    src="../assets/background_sub_pic.png"
+    alt="alt text"
+    title="Background Subtraction with OpenCV"
+    width="700"
+    height="480"
+  /><br />Frame Differentiation without OpenCV Example:<br /><img
+    src="../assets/framdiff_pic.png"
+    alt="alt text"
+    title="Frame Differentiation without OpenCV"
+    width="700"
+    height="480"
+  /><br /><a href="../lib/BackgroundSubtraction/BackgroundSubtraction.pde"
+    >Background Subtraction with OpenCV Code</a
+  ><br /><a href="../lib/FrameDiff/FrameDiff.pde"
+    >Frame Differentiation without OpenCV Code</a
+  >
+</p>
+<h3 id="osc-server-communication-">OSC server communication:</h3>
+<p>
+  <a href="../lib/oscp5_broadcast/oscp5_broadcast.pde"
+    >Processing OSC Broadcast Server Code</a
+  >
+</p>
+<h3 id="chuck-side-">ChucK side:</h3>
+<p>
+  ChucK receives an OSC message containing an integer which corresponds to the
+  gain of the output sound.<br /><strong>TODO:</strong><br />ChucK needs to
+  sweep cleanly between <em>density</em> values which come with each OSC
+  message.<br />ChucK needs to output more, better sound.<br /><a
+    href="../app/OSC_recv.ck"
+    >ChucK OSC Receiver and Sound Generation Code</a
+  >
+</p>

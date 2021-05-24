@@ -3,7 +3,9 @@
 ## Milestone 2:  
 ### My Final Project: Using **frame differentiation** on **video input in Processing** and piping the measure of difference to **ChucK over OSC** to generate **audio with corresponding density**  
 #
-In the `/final/` repository, run `sh make.sh` to to execute program. 
+In the `/final/` repository, run `sh make.sh` to to execute program.   
+[app code: Processing](../app/app.pde)  
+[app code: ChucK](../app/OSC_recv.ck)  
 #
 ### Processing side:  
 As of now, I am determining the best algorithm to process video using frame differentiation. Below I have included screenshots of the two algorithms I am toying with. In one, red contours are used to visualize the motion that the program interprets against a background. This is known as **background subtraction**. This is built upon the OpenCV library for Processing using image subtraction and filtering (blur, gray-scale) to mitigate noise. 
@@ -27,4 +29,4 @@ ChucK receives an OSC message containing an integer which corresponds to the gai
 **TODO:**  
 ChucK needs to sweep cleanly between *density* values which come with each OSC message.  
 ChucK needs to output more, better sound.   
-[ChucK OSC Receiver and Sound Generation Code](../lib/OSC_recv.ck)  
+[ChucK OSC Receiver and Sound Generation Code](../app/OSC_recv.ck)  
