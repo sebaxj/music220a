@@ -19,7 +19,7 @@ void setup() {
 }
 
 void draw() {
-  tint(255, 20);
+  //tint(255, 20);
   image(video, 0, 0);
 }
 
