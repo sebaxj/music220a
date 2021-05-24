@@ -7,26 +7,16 @@
 
 import gab.opencv.*;
 import processing.video.*;
-import oscP5.*;
-import netP5.*;
 
 // GLOBAL INSTANCES //
 Movie video;
 OpenCV opencv;
 int prevCont;
-OscP5 oscP5;
-NetAddressList myNetAddressList = new NetAddressList();
 
 // CONSTANTS //
 int width = 1064;
 int length = 680;
 int threshold = 20;
-int myListeningPort = 32000;
-int myBroadcastPort = 12000;
-NetAddress myRemoteLocation;
-
-String myConnectPattern = "/server/connect";
-String myDisconnectPattern = "/server/disconnect";
 
 void setup() {
   size(1064, 680);
