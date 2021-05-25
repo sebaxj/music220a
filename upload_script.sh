@@ -25,8 +25,9 @@ cd wav
 for FILE in *.wav; do ffmpeg-normalize $FILE -ext wav; done
 cd ..
 
+read -p "Choose a page title for the converted HTML webpage: " page_name
 # convert markdown to html for webpage
-pandoc -s index.md -o index.html
+pandoc -s -c ../../../css/style.css index.md -o index.html --metadata pagetitle="$page_name"
 
 # push to remote, prompt user to pull and merge
 git status
