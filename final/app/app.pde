@@ -24,6 +24,7 @@ int numPixels;
 int[] previousFrame;
 int width = 1064;
 int length = 680;
+int frameDiff = 1;
 
 int myListeningPort = 32000;
 int myBroadcastPort = 12000;
@@ -92,7 +93,8 @@ void draw() {
     // only update the screen if the image has changed.
     if (movementSum > 0) {
       updatePixels();
-      println(movementSum); // Print the total amount of movement to the console
+      println(((movementSum - frameDiff + 0.0) / (frameDiff + 0.0)) * 100); // Print the total amount of movement to the console
+      frameDiff = movementSum;
     }
   }
 }
