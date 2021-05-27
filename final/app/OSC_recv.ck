@@ -24,7 +24,7 @@ else 12000 => oin.port;
 
 // create an address in the receiver
 // needs to match the Processing message
-oin.addAddress("/mouse/press, f");
+oin.addAddress("/frame/, f");
 
 spork ~ modulateDensity();  
 

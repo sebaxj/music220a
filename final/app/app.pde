@@ -25,6 +25,8 @@ int[] previousFrame;
 int width = 1064;
 int length = 680;
 int frameDiff = 1;
+float perChange = 0.0;
+int frameNum = 0;
 
 int myListeningPort = 32000;
 int myBroadcastPort = 12000;
@@ -87,14 +89,31 @@ void draw() {
 
       // Save the current color into the 'previous' buffer
       previousFrame[i] = currColor;
+
+      // update frame count
+      frameNum++;
     }
 
     // To prevent flicker from frames that are all black (no movement),
     // only update the screen if the image has changed.
     if (movementSum > 0) {
       updatePixels();
-      println(((movementSum - frameDiff + 0.0) / (frameDiff + 0.0)) * 100); // Print the total amount of movement to the console
+
+      // print out percent change between frames to console, update new frameDiff
+      perChange = (((movementSum - frameDiff + 0.0) / (frameDiff + 0.0)) * 100);
       frameDiff = movementSum;
+
+      if(frameNum >= 10000000) {
+          frameNum = 0;
+          // OSC msg string must match what the reciever is looking for
+          OscMessage myMessage = new OscMessage("/frame/");
+          myMessage.add(perChange % 10); // density var stored as int in msg
+
+          // send message
+          oscP5.send(myMessage, myRemoteLocation);
+
+          println(perChange % 10);
+      }
     }
   }
 }
@@ -137,7 +156,7 @@ void mousePressed() {
   // OSC msg string must match what the reciever is looking for
   OscMessage myMessage = new OscMessage("/mouse/press");
 
-  myMessage.add(random(1, 4)); // density var stored as int in msg
+  myMessage.add(perChange); // density var stored as int in msg
 
   // send message
   oscP5.send(myMessage, myRemoteLocation);
