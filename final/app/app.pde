@@ -27,6 +27,7 @@ int length = 680;
 int frameDiff = 1;
 float perChange = 0.0;
 int frameNum = 0;
+int frame_OSC_sample_rate = 5000000;
 
 int myListeningPort = 32000;
 int myBroadcastPort = 12000;
@@ -34,6 +35,9 @@ NetAddress myRemoteLocation;
 
 String myConnectPattern = "/server/connect";
 String myDisconnectPattern = "/server/disconnect";
+String control_mov = "no_movement.mov";
+String test_mov = "test.mov";
+String fast_mov = "fast.mov";
 
 void setup() {
   size(1064, 680);
@@ -44,7 +48,7 @@ void setup() {
   frameRate(25);
 
   // setup video input
-  video = new Movie(this, "fast.mov");
+  video = new Movie(this, test_mov);
   video.loop(); 
 
   numPixels = width * length;
@@ -103,7 +107,7 @@ void draw() {
       perChange = (((movementSum - frameDiff + 0.0) / (frameDiff + 0.0)) * 100);
       frameDiff = movementSum;
 
-      if(frameNum >= 10000000) {
+      if(frameNum >= frame_OSC_sample_rate) {
           frameNum = 0;
           // OSC msg string must match what the reciever is looking for
           OscMessage myMessage = new OscMessage("/frame/");
