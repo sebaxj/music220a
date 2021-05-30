@@ -27,7 +27,7 @@ int length = 680;
 int frameDiff = 1;
 float perChange = 0.0;
 int frameNum = 0;
-int frame_OSC_sample_rate = 5000000;
+int frame_OSC_sample_rate = 2000000;
 
 int myListeningPort = 32000;
 int myBroadcastPort = 12000;
@@ -48,7 +48,7 @@ void setup() {
   frameRate(25);
 
   // setup video input
-  video = new Movie(this, test_mov);
+  video = new Movie(this, fast_mov);
   video.loop(); 
 
   numPixels = width * length;
@@ -98,16 +98,15 @@ void draw() {
       frameNum++;
     }
 
+    perChange = (((movementSum - frameDiff + 0.0) / (frameDiff + 0.0)) * 100);
     // To prevent flicker from frames that are all black (no movement),
     // only update the screen if the image has changed.
     if (movementSum > 0) {
       updatePixels();
 
       // print out percent change between frames to console, update new frameDiff
-      perChange = (((movementSum - frameDiff + 0.0) / (frameDiff + 0.0)) * 100);
       frameDiff = movementSum;
-
-      if(frameNum >= frame_OSC_sample_rate) {
+      if(frameNum >= frame_OSC_sample_rate && abs(perChange) > 30) {
           frameNum = 0;
           // OSC msg string must match what the reciever is looking for
           OscMessage myMessage = new OscMessage("/frame/");
