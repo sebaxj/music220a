@@ -27,7 +27,7 @@ int length = 680;
 int frameDiff = 1;
 float perChange = 0.0;
 int frameNum = 0;
-int frame_OSC_sample_rate = 2000000;
+int frame_OSC_sample_rate = 10000000;
 
 int myListeningPort = 32000;
 int myBroadcastPort = 12000;
@@ -110,12 +110,12 @@ void draw() {
           frameNum = 0;
           // OSC msg string must match what the reciever is looking for
           OscMessage myMessage = new OscMessage("/frame/");
-          myMessage.add(perChange % 10); // density var stored as int in msg
+          myMessage.add(abs(perChange % 10)); // density var stored as int in msg
 
           // send message
           oscP5.send(myMessage, myRemoteLocation);
 
-          println(perChange % 10);
+          //println(perChange % 11);
       }
     }
   }

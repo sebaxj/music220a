@@ -42,13 +42,29 @@ while (true) {
     while (oin.recv(msg) != 0) { 
         // getFloat fetches the expected float (as indicated by "f")
         msg.getFloat(0) => f;
-        if(f > 0) master.gain() + 1 => master.gain;
-        if(f <= 0) master.gain() - 1 => master.gain;
-        f => buf.play;
-        // print
-        <<< "got (via OSC):", buf.play() >>>;
+        <<<"got (via OSC):", f>>>;
+        
+        if(master.gain() > 2.0) {
+            1.0 => master.gain;
+        } else if(master.gain() <= 0.0) {
+            1.0 => master.gain;
+        }
+        
+        if(f > 5.0) {
+            if(master.gain() + 0.5 < 2.0) {
+                master.gain() + 0.5 => master.gain;
+            }
+        } else if(f < 3.0) {
+            if(master.gain() - 0.2 < 0) {
+                master.gain() - 0.2 => master.gain;
+            }
+        }
+        
+        //if(f > 0) master.gain() + 1 => master.gain;
+        //if(f <= 0) master.gain() - 1 => master.gain;
+        //f => buf.play;
         // set play pointer to beginning
-        0 => buf.pos;
+        //0 => buf.pos;
     }
 }
 
@@ -81,7 +97,7 @@ class Synth {
     // patch low -> rev -> dax ->
     LPF low => NRev rev => Gain gain;
     
-    0.4 => gain.gain;
+    1.0 => gain.gain;
     
     // Set Param for UGen //
     // mix reverb
@@ -93,8 +109,7 @@ class Synth {
     0.5 => low.gain;
     
     fun void playChord(int root, float chord[], float vel, 
-    dur a, dur d, float s, dur r)
-    {
+    dur a, dur d, float s, dur r) {
         // ugens "local" to the function
         TriOsc osc[4];
         ADSR e => low;
@@ -109,7 +124,6 @@ class Synth {
             Std.mtof(root + chord[i]) => osc[i].freq;
             vel => osc[i].gain;
         }
-        
         
         // open env (e is your envelope)
         e.set(a, d, s, r);
@@ -128,6 +142,14 @@ class Synth {
     fun void patch(int var) {
         if(var == 1) gain => dac;
         if(var == 0) gain !=> dac;
+    }
+    
+    fun void vel(float f) {
+        f => gain.gain;
+    }
+    
+    fun float getVel() {
+        return gain.gain();
     }
     
     fun void play(int root, float chord[]) {
