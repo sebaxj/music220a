@@ -4,22 +4,35 @@
 
 // f determines chuck time progress in playchord loop in synth
 
+// CHORDS ARRAYS //
+// min
+[0., 3., 7., 0.] @=> float min[];
+    
+// min4/2
+[-2., 0., 3., 7.] @=> float min42[];
+    
+// dim
+[-12., 3., 6., 0.] @=> float dim[];
+    
+// Maj
+[0., 4., 7., 12.] @=> float maj[];
+    
+// V7
+[0., 4., 7., 10.] @=> float v7[];
+    
+// fully dim 7
+[0., 3., 6., 9.] @=> float dim7[];
+///////////////////////////////////////
+
 /* GLOBAL INSTANCES */
-SndBuf buf;
 Synth s;
-Gain master;
-1.0 => master.gain;
-1 => int first_time;
+STKFlute fl;
+Kick k;
 50 => int T; // initialize chuck time progress in playchord loop in synth
+1 => int first_time;
 
 // the patch
-buf => master => dac;
-
-// load the file
-me.dir(-1) + "/assets/Electronic-Kick-1.wav" => buf.read;
-
-// buf gain: don't play yet
-0 => buf.play; 
+s.patch(1);
 
 // create our OSC receiver
 OscIn oin;
@@ -43,10 +56,9 @@ float f;
 while (true) {
     // wait for event to arrive
     oin => now;
-
-    // synth is patched to dac on first OSC message
+    
     if(first_time) {
-        s.patch(1);
+        spork ~ rec();
         0 => first_time;
     }
     
@@ -59,60 +71,74 @@ while (true) {
         if(f >= 6.0) {
             f $ int => int i;
             if(i == 6) {
-                100 => T;
-                spork ~ s.run();
+                100 => T;      
+                spork ~ k.run(1);         
+                spork ~ s.run(60, maj);
+                spork ~ fl.run(1);
                 <<<"'f' is: ", i>>>;
                 <<<"'T' is: ", T>>>;
             } else if(i == 7) {
                 80 => T;
-                spork ~ s.run();
+                spork ~ k.run(1); 
+                spork ~ s.run(57, min);
+                spork ~ fl.run(1);
                 <<<"'f' is: ", i>>>;
                 <<<"'T' is: ", T>>>;
             } else if(i == 8) {
                 50 => T;
-                spork ~ s.run();
+                spork ~ k.run(2); 
+                spork ~ s.run(57, dim);
+                spork ~ fl.run(1);
                 <<<"'f' is: ", i>>>;
-                <<<"'T' is: ", T>>>;                
+                <<<"'T' is: ", T>>>;             
             } else if(i == 9) {
                 30 => T;
-                spork ~ s.run();
+                spork ~ k.run(3); 
+                spork ~ s.run(57, min);
+                spork ~ fl.run(2);
+                18::ms => now;
+                spork ~ s.run(57, min);
                 <<<"'f' is: ", i>>>;
-                <<<"'T' is: ", T>>>;                
+                <<<"'T' is: ", T>>>;               
             } else if(i == 10) {
+                // a dim chord
                 10 => T;
-                spork ~ s.run();
+                spork ~ k.run(4); 
+                spork ~ s.run(57, min);
+                spork ~ fl.run(2);
+                15::ms => now;
+                spork ~ s.run(57, dim);
+                5::ms => now;
+                spork ~ s.run(57, min);
                 <<<"'f' is: ", i>>>;
-                <<<"'T' is: ", T>>>;                
+                <<<"'T' is: ", T>>>;              
             }   
         } 
     }
 }
 
+fun void rec() {
+    "ck-final.wav" => string filename;
+    // pull samples from the dac
+    dac => Gain g => WvOut w => blackhole;
+    // this is the output file name
+    filename => w.wavFilename;
+    <<<"writing to file:", "'" + w.filename() + "'">>>;
+    // any gain you want for the output
+    .5 => g.gain;
+    
+    // temporary workaround to automatically close file on remove-shred
+    null @=> w;
+    
+    // infinite time loop...
+    // ctrl-c will stop it, or modify to desired duration
+    while( true ) 1::second => now;
+}
+
 /////////////////
 // SYNTH CLASS //
 /////////////////
-
 class Synth {
-    // CHORDS ARRAYS //
-    // min
-    [0., 3., 7., 0.] @=> float min[];
-    
-    // min4/2
-    [-2., 0., 3., 7.] @=> float min42[];
-    
-    // dim
-    [-12., 3., 6., 0.] @=> float dim[];
-    
-    // Maj
-    [0., 4., 7., 12.] @=> float maj[];
-    
-    // V7
-    [0., 4., 7., 10.] @=> float v7[];
-    
-    // fully dim 7
-    [0., 3., 6., 9.] @=> float dim7[];
-    ///////////////////
-    
     // Global UGen //
     // patch low -> rev -> dax ->
     LPF low => NRev rev => Gain gain;
@@ -184,8 +210,96 @@ class Synth {
         }
     }
     
-    fun void run() {
-        play(57, min); // am
+    fun void run(int root, float chord[]) {
+        play(root, min);
         (T*20)::ms => now;
     }
 }
+
+/////////////////
+// FLUTE CLASS //
+/////////////////
+class STKFlute {
+    // STK Flute
+    
+    // patch
+    Flute flute => PoleZero f => JCRev r => Gain gain => dac;
+    .75 => r.gain;
+    .05 => r.mix;
+    .99 => f.blockZero;
+    0.06 => gain.gain;
+    
+    // our notes
+    [57, 60, 62, 64, 65] @=> int notes[];
+    
+    // infinite time-loop
+    fun void run(int num) {
+        
+        for(0 => int j; j < num; j++) {
+            // clear
+            flute.clear(1.0);
+            
+            // set
+            Math.random2f(0.6, 1) => flute.jetDelay;
+            Math.random2f(0.0, 0.4) => flute.jetReflection;
+            Math.random2f(0.4, 1) => flute.endReflection;
+            Math.random2f(0.2, 0.8) => flute.noiseGain;
+            Math.random2f(0, 12) => flute.vibratoFreq;
+            Math.random2f(0, 1) => flute.vibratoGain;
+            Math.random2f(0, 1) => flute.pressure;
+            
+            // print
+            <<< "---", "" >>>;
+            <<< "jetDelay:", flute.jetDelay() >>>;
+            <<< "jetReflection:", flute.jetReflection() >>>;
+            <<< "endReflection:", flute.endReflection() >>>;
+            <<< "noiseGain:", flute.noiseGain() >>>;
+            <<< "vibratoFreq:", flute.vibratoFreq() >>>;
+            <<< "vibratoGain:", flute.vibratoGain() >>>;
+            <<< "breath pressure:", flute.pressure() >>>;
+            
+            // factor
+            Math.random2f(.75, 2) => float factor;
+            
+            for(int i; i < notes.size(); i++) {
+                play(24 + notes[i], Math.random2f(.6, .9));
+                300::ms * factor => now;
+            }
+        }
+        flute.clear(1.0);
+    }
+        // basic play function (add more arguments as needed)
+        fun void play(float note, float velocity) {
+            // start the note
+            Std.mtof(note) => flute.freq;
+            velocity => flute.noteOn;
+        }
+
+}
+
+/////////////////////
+// KICK DRUM CLASS //
+/////////////////////
+class Kick {
+    SndBuf buf => dac;
+    
+    // setup delay line
+    adc => DelayL delay => dac;
+    
+    // set delay parameters
+    .75::second => delay.max => delay.delay;
+    
+    // load the file
+    me.dir(-1) + "/assets/Electronic-Kick-1.wav" => buf.read;
+    
+    // buf gain: don't play yet
+    0 => buf.play; 
+    
+    fun void run(int num) {
+        for(0 => int i; i < num; i++) {
+            0.5 => buf.play;
+            0 => buf.pos;
+        }
+    }
+}
+    
