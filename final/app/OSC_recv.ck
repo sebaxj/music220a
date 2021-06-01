@@ -1,10 +1,16 @@
+// TODO
+// f determines vel decay in synth?
+// f determines reverb mix?
+
+// f determines chuck time progress in playchord loop in synth
+
 /* GLOBAL INSTANCES */
 SndBuf buf;
 Synth s;
 Gain master;
 1.0 => master.gain;
-spork ~ s.run();
-s.patch(1);
+1 => int first_time;
+50 => int T; // initialize chuck time progress in playchord loop in synth
 
 // the patch
 buf => master => dac;
@@ -37,6 +43,12 @@ float f;
 while (true) {
     // wait for event to arrive
     oin => now;
+
+    // synth is patched to dac on first OSC message
+    if(first_time) {
+        s.patch(1);
+        0 => first_time;
+    }
     
     // grab the next message from the queue. 
     while (oin.recv(msg) != 0) { 
@@ -44,27 +56,35 @@ while (true) {
         msg.getFloat(0) => f;
         <<<"got (via OSC):", f>>>;
         
-        if(master.gain() > 2.0) {
-            1.0 => master.gain;
-        } else if(master.gain() <= 0.0) {
-            1.0 => master.gain;
-        }
-        
-        if(f > 5.0) {
-            if(master.gain() + 0.5 < 2.0) {
-                master.gain() + 0.5 => master.gain;
-            }
-        } else if(f < 3.0) {
-            if(master.gain() - 0.2 < 0) {
-                master.gain() - 0.2 => master.gain;
-            }
-        }
-        
-        //if(f > 0) master.gain() + 1 => master.gain;
-        //if(f <= 0) master.gain() - 1 => master.gain;
-        //f => buf.play;
-        // set play pointer to beginning
-        //0 => buf.pos;
+        if(f >= 6.0) {
+            f $ int => int i;
+            if(i == 6) {
+                100 => T;
+                spork ~ s.run();
+                <<<"'f' is: ", i>>>;
+                <<<"'T' is: ", T>>>;
+            } else if(i == 7) {
+                80 => T;
+                spork ~ s.run();
+                <<<"'f' is: ", i>>>;
+                <<<"'T' is: ", T>>>;
+            } else if(i == 8) {
+                50 => T;
+                spork ~ s.run();
+                <<<"'f' is: ", i>>>;
+                <<<"'T' is: ", T>>>;                
+            } else if(i == 9) {
+                30 => T;
+                spork ~ s.run();
+                <<<"'f' is: ", i>>>;
+                <<<"'T' is: ", T>>>;                
+            } else if(i == 10) {
+                10 => T;
+                spork ~ s.run();
+                <<<"'f' is: ", i>>>;
+                <<<"'T' is: ", T>>>;                
+            }   
+        } 
     }
 }
 
@@ -157,17 +177,15 @@ class Synth {
         .5 => float vel;
         
         for(0 => int i; i < 8; i++) {
-            playChord(root, chord, vel, 50::ms, 50::ms, 0.5, 100::ms);
+            playChord(root, chord, vel, T::ms, T::ms, 0.5, (T*2)::ms);
             
-            50::ms => now;
+            T::ms => now;
             vel - .2 => vel;
         }
     }
     
     fun void run() {
-        while(true) {
-            play(57, min); // am
-            1000::ms => now;
-        }
+        play(57, min); // am
+        (T*20)::ms => now;
     }
 }

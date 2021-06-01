@@ -28,6 +28,7 @@ int frameDiff = 1;
 float perChange = 0.0;
 int frameNum = 0;
 int frame_OSC_sample_rate = 10000000;
+int MOVEMENT_THRESHOLD = 3000000;
 
 int myListeningPort = 32000;
 int myBroadcastPort = 12000;
@@ -48,7 +49,7 @@ void setup() {
   frameRate(25);
 
   // setup video input
-  video = new Movie(this, fast_mov);
+  video = new Movie(this, test_mov);
   video.loop(); 
 
   numPixels = width * length;
@@ -101,9 +102,8 @@ void draw() {
     perChange = (((movementSum - frameDiff + 0.0) / (frameDiff + 0.0)) * 100);
     // To prevent flicker from frames that are all black (no movement),
     // only update the screen if the image has changed.
-    if (movementSum > 0) {
+    if (movementSum > MOVEMENT_THRESHOLD) {
       updatePixels();
-
       // print out percent change between frames to console, update new frameDiff
       frameDiff = movementSum;
       if(frameNum >= frame_OSC_sample_rate && abs(perChange) > 30) {
@@ -117,6 +117,7 @@ void draw() {
 
           //println(perChange % 11);
       }
+      //saveFrame("/Users/sebastianjames/src/music220a/final/app/screen/###############.png");
     }
   }
 }
