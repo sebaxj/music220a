@@ -11,4 +11,4 @@ echo Starting Frame Differentiation Algorithm for Video... &
 echo Sporking OSC reciever in Chuck... &
 chuck app/OSC_recv.ck # keep ChucK task in the foreground, exit with ^C 
 echo Exitiing...
-#mv ck-final.wav app/screen/
+mv ck-final.wav app/screen/

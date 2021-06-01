@@ -79,21 +79,21 @@ while (true) {
                 <<<"'T' is: ", T>>>;
             } else if(i == 7) {
                 80 => T;
-                spork ~ k.run(1); 
+                spork ~ k.run(2); 
                 spork ~ s.run(57, min);
                 spork ~ fl.run(1);
                 <<<"'f' is: ", i>>>;
                 <<<"'T' is: ", T>>>;
             } else if(i == 8) {
                 50 => T;
-                spork ~ k.run(2); 
+                spork ~ k.run(3); 
                 spork ~ s.run(57, dim);
                 spork ~ fl.run(1);
                 <<<"'f' is: ", i>>>;
                 <<<"'T' is: ", T>>>;             
             } else if(i == 9) {
                 30 => T;
-                spork ~ k.run(3); 
+                spork ~ k.run(5); 
                 spork ~ s.run(57, min);
                 spork ~ fl.run(2);
                 18::ms => now;
@@ -103,7 +103,7 @@ while (true) {
             } else if(i == 10) {
                 // a dim chord
                 10 => T;
-                spork ~ k.run(4); 
+                spork ~ k.run(8); 
                 spork ~ s.run(57, min);
                 spork ~ fl.run(2);
                 15::ms => now;
@@ -143,7 +143,7 @@ class Synth {
     // patch low -> rev -> dax ->
     LPF low => NRev rev => Gain gain;
     
-    1.0 => gain.gain;
+    1.2 => gain.gain;
     
     // Set Param for UGen //
     // mix reverb
@@ -227,7 +227,7 @@ class STKFlute {
     .75 => r.gain;
     .05 => r.mix;
     .99 => f.blockZero;
-    0.06 => gain.gain;
+    0.4 => gain.gain;
     
     // our notes
     [57, 60, 62, 64, 65] @=> int notes[];
@@ -287,7 +287,7 @@ class Kick {
     adc => DelayL delay => dac;
     
     // set delay parameters
-    .75::second => delay.max => delay.delay;
+    1.5::second => delay.max => delay.delay;
     
     // load the file
     me.dir(-1) + "/assets/Electronic-Kick-1.wav" => buf.read;

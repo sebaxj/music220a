@@ -28,7 +28,7 @@ int frameDiff = 1;
 float perChange = 0.0;
 int frameNum = 0;
 int frame_OSC_sample_rate = 10000000;
-int MOVEMENT_THRESHOLD = 2800000;
+int MOVEMENT_THRESHOLD = 2600000;
 
 int myListeningPort = 32000;
 int myBroadcastPort = 12000;
@@ -102,9 +102,9 @@ void draw() {
     perChange = (((movementSum - frameDiff + 0.0) / (frameDiff + 0.0)) * 100);
     // To prevent flicker from frames that are all black (no movement),
     // only update the screen if the image has changed.
-     image(video, 0, 0);
+    // image(video, 0, 0);
     if (movementSum > MOVEMENT_THRESHOLD) {
-      //updatePixels();
+      updatePixels();
       // print out percent change between frames to console, update new frameDiff
       frameDiff = movementSum;
       if(frameNum >= frame_OSC_sample_rate && abs(perChange) > 30) {
