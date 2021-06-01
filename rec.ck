@@ -5,7 +5,7 @@
 
 // get name
 me.arg(0) => string filename;
-if( filename.length() == 0 ) "foo.wav" => filename;
+if( filename.length() == 0 ) "ck-final.wav" => filename;
 
 // pull samples from the dac
 dac => Gain g => WvOut w => blackhole;
