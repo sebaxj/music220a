@@ -1,9 +1,3 @@
-// TODO
-// f determines vel decay in synth?
-// f determines reverb mix?
-
-// f determines chuck time progress in playchord loop in synth
-
 // CHORDS ARRAYS //
 // min
 [0., 3., 7., 0.] @=> float min[];

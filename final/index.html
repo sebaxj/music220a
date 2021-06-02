@@ -41,6 +41,32 @@
         Your browser does not support HTML video.
       </video>
 
+      <h3 id="reflection">A Reflection on this Project</h3>
+      <p>
+          The first hurdle to overcome was finding an efficient way to process video and trigger audio with 
+          the lowest latency possible. Though an algorithm like Background Subtraction run through the OpenCV 
+          library would most accurately determine motion of a foreground object against a background, the process 
+          is incredibly CPU intensive and resulted in a high latency and low fidelity of a combined audio-visual 
+          output. Frame differentiation, on the other hand, is a more streamlined approach dealing at the extreme 
+          of literally comparing each RGB component of each pixel to determine is movement occurred. This process 
+          was enhanced using bitwise operators and bit-masking. Ultimately, I chose to harness the latency as "artful 
+          design" and added multiple reverb filters and delay lines to the ChucK audio. 
+      </p>
+      <p>
+          However, as one can imagine, such extreme pixel differentiation resulted in noise convoluting what was intentional 
+          motion in the input clip. As such, certain pixel movement thresholds were needed to filter out noise, auto-focus, 
+          flickering lights, and other artifacts. A value of percent change between the current frame and the one previous is sent 
+          every 10 million frames over OSC to the ChucK receiver script. Messages are sent every 10 million frames because anything more 
+          resulted in high latency between video and audio, and anything less resulted in pixel movement being lost. This system of 
+          movement thresholds and OSC message rates was calibrated using a "control" video of a room with no movement.
+      </p>
+      <p>
+          Lastly, the ChucK script generating audio upon movement triggers over OSC uses a Synth codebase I wrote, the STK flute code 
+          which is adapted, and a kick drum sample played through a SndBuf. These three classes work in trichotomy to respond to certain 
+          levels of change and play audio accordingly. Reverb, delay, and random number generators work to create an ever-evolving soundscape 
+          in this audiovisual experience.  
+      </p>
+
       <h1></h1>
 
       <h3>Archive</h3>

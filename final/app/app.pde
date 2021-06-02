@@ -1,6 +1,5 @@
 /*
  * Frame Differencing 
- * by Golan Levin. 
  *
  * Quantify the amount of movement in the video frame using frame-differencing.
  * 
@@ -115,8 +114,6 @@ void draw() {
 
           // send message
           oscP5.send(myMessage, myRemoteLocation);
-
-          //println(perChange % 11);
       }
       //saveFrame("/Users/sebastianjames/src/music220a/final/app/screen/###############.png");
     }
@@ -154,15 +151,4 @@ private void disconnect(String theIPaddress) {
     println("### "+theIPaddress+" is not connected.");
   }
   println("### currently there are "+myNetAddressList.list().size());
-}
-
-// Function to send an OSC message when the mouse presses the background image
-void mousePressed() {
-  // OSC msg string must match what the reciever is looking for
-  OscMessage myMessage = new OscMessage("/mouse/press");
-
-  myMessage.add(perChange); // density var stored as int in msg
-
-  // send message
-  oscP5.send(myMessage, myRemoteLocation);
 }
